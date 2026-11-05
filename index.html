@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antigravity Arcade Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-space: #070a13;
+      --bg-card: rgba(14, 20, 36, 0.75);
+      --border-card: rgba(56, 139, 253, 0.2);
+      --border-glow: rgba(56, 139, 253, 0.5);
+      --primary-cyan: #38bdf8;
+      --primary-blue: #3b82f6;
+      --primary-emerald: #10b981;
+      --primary-amber: #f59e0b;
+      --primary-purple: #a855f7;
+      --text-main: #f1f5f9;
+      --text-sub: #94a3b8;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-space);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 90% 90%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px 64px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1080px;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+
+    /* HEADER */
+    header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--primary-cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary-cyan);
+      box-shadow: 0 0 10px var(--primary-cyan);
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.15); }
+    }
+
+    h1 {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-sub);
+      font-size: 16px;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    /* STATS SUMMARY BAR */
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      padding: 16px 24px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+    }
+
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .summary-val {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* GAME GRID */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+      gap: 24px;
+    }
+
+    @media (max-width: 640px) {
+      .games-grid {
+        grid-template-columns: 1fr;
+      }
+      h1 {
+        font-size: 32px;
+      }
+    }
+
+    /* GAME CARD */
+    .game-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .game-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-glow);
+      box-shadow: 0 20px 40px -15px rgba(56, 189, 248, 0.2);
+    }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--accent-color, var(--primary-cyan)), transparent);
+      opacity: 0.8;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .game-badge {
+      font-size: 32px;
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-heading {
+      flex: 1;
+    }
+
+    .game-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .game-genre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent-color, var(--primary-cyan));
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .game-desc {
+      color: var(--text-sub);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-sub);
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .btn-launch {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, var(--accent-color, var(--primary-cyan)), var(--accent-glow, var(--primary-blue)));
+      color: #070a13;
+      font-weight: 700;
+      font-size: 14px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-launch:hover {
+      filter: brightness(1.15);
+      transform: scale(1.02);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+    }
+
+    .folder-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+      <div class="pill-badge">
+        <span class="pill-dot"></span>
+        Zero-Dependency Canvas Engine
+      </div>
+      <h1>Antigravity Games Hub</h1>
+      <p class="subtitle">
+        A unified arcade launcher for browser games built with pure HTML5 Canvas, native ES6 JavaScript, and Web Audio API synthesis.
+      </p>
+    </header>
+
+    <!-- STATUS STRIP -->
+    <div class="summary-strip">
+      <div class="summary-item">
+        <span class="summary-label">Catalog</span>
+        <span class="summary-val">3 Playable Titles</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Audio Tech</span>
+        <span class="summary-val">Procedural Synth</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Rendering</span>
+        <span class="summary-val">60 FPS Native Canvas</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Dependencies</span>
+        <span class="summary-val">0 External Packages</span>
+      </div>
+    </div>
+
+    <!-- GAMES GRID -->
+    <main class="games-grid">
+
+      <!-- GAME 1: PLAYLOG GRID -->
+      <article class="game-card" style="--accent-color: #38bdf8; --accent-glow: #0284c7;">
+        <div class="card-top">
+          <div class="game-badge">📡</div>
+          <div class="card-heading">
+            <h2 class="game-title">Playlog Grid: DOOH Dispatcher</h2>
+            <div class="game-genre">NETWORK TELEMETRY & ROUTING SIMULATION</div>
+          </div>
+        </div>
+
+        <p class="game-desc">
+          Manage a high-throughput programmatic Digital Out-of-Home network inspired by <em>Mini Metro</em>. Connect fiber cables from the central Lynx SSP Hub to billboard screens, route video packets, manage uptime SLAs, reboot glitching nodes, and pick shift upgrades.
+        </p>
+
+        <div class="tags-row">
+          <span class="tag">Simulation</span>
+          <span class="tag">Strategy</span>
+          <span class="tag">Dynamic Events</span>
+          <span class="tag">Audio Synthesis</span>
+        </div>
+
+        <div class="card-actions">
+          <span class="folder-path">📁 playlog-grid/</span>
+          <a href="playlog-grid/index.html" class="btn-launch">
+            Launch Game <span>→</span>
+          </a>
+        </div>
+      </article>
+
+      <!-- GAME 2: OVERDRIVE BLOCK CLEARER -->
+      <article class="game-card" style="--accent-color: #a855f7; --accent-glow: #ec4899;">
+        <div class="card-top">
+          <div class="game-badge">🧩</div>
+          <div class="card-heading">
+            <h2 class="game-title">Overdrive: Block Clearer</h2>
+            <div class="game-genre">KINETIC 8x8 SPATIAL PUZZLE CLEARER</div>
+          </div>
+        </div>
+
+        <p class="game-desc">
+          A minimalist spatial polyomino block puzzle. Drag pieces onto an 8x8 board to trigger dual-axis simultaneous line sweeps. Features satisfying screen shake, procedural explosion particle blasts, dynamic combo multipliers, and harmonic chord tones.
+        </p>
+
+        <div class="tags-row">
+          <span class="tag">Spatial Puzzle</span>
+          <span class="tag">Arcade Juice</span>
+          <span class="tag">Screen Shake</span>
+          <span class="tag">Touch Support</span>
+        </div>
+
+        <div class="card-actions">
+          <span class="folder-path">📁 overdrive/</span>
+          <a href="overdrive/index.html" class="btn-launch" style="background: linear-gradient(135deg, #a855f7, #ec4899); color: #fff;">
+            Launch Game <span>→</span>
+          </a>
+        </div>
+      </article>
+
+      <!-- GAME 3: LIFELINES +AGE SIMULATOR -->
+      <article class="game-card" style="--accent-color: #10b981; --accent-glow: #059669;">
+        <div class="card-top">
+          <div class="game-badge">🧬</div>
+          <div class="card-heading">
+            <h2 class="game-title">LifeLines: The +Age Simulator</h2>
+            <div class="game-genre">TEXT LIFE SIMULATOR & GENERATIONAL DYNASTY</div>
+          </div>
+        </div>
+
+        <p class="game-desc">
+          Begin life as an infant with randomized parents, nationality, and vitals. Tap the central <strong>"+ Age"</strong> engine to advance year by year, navigate moral dilemmas, pursue degrees, climb corporate or underworld career tracks, manage real estate, trade crypto, escape high-security prisons via a stealth mini-game, earn lifetime ribbons, and pass your fortune down through multi-generational family dynasties.
+        </p>
+
+        <div class="tags-row">
+          <span class="tag">Life Sim</span>
+          <span class="tag">Dynasty</span>
+          <span class="tag">Crime & Prison Break</span>
+          <span class="tag">Stock Market</span>
+          <span class="tag">Ribbons</span>
+        </div>
+
+        <div class="card-actions">
+          <span class="folder-path">📁 lifelines/</span>
+          <a href="lifelines/index.html" class="btn-launch" style="background: linear-gradient(135deg, #10b981, #0284c7); color: #fff;">
+            Launch Game <span>→</span>
+          </a>
+        </div>
+      </article>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      Antigravity Games Workspace • Open <code>index.html</code> in any web browser to launch
+    </footer>
+  </div>
+
+</body>
+</html>

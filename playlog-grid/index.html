@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Playlog Dispatcher - DOOH Telemetry Game</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Reddit+Sans:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <!-- TOP STATUS HUD (PLAYLOG BRANDED) -->
+    <header id="top-bar">
+      <!-- Left: Brand Logo & Telemetry Stats -->
+      <div class="hud-panel">
+        <div class="brand-badge">
+          <img src="logo-playlog.png" alt="Playlog" class="brand-logo-img">
+          <div class="brand-text-container">
+            <div class="brand-title">Playlog Grid</div>
+            <div class="brand-sub">DOOH Telemetry</div>
+          </div>
+        </div>
+
+        <div class="stat-item">
+          <span class="stat-label">SLA Reliability</span>
+          <span id="stat-sla" class="stat-val sla-healthy">100%</span>
+        </div>
+
+        <div class="stat-item">
+          <span class="stat-label">Verified Playlogs</span>
+          <span id="stat-impressions" class="stat-val">0</span>
+        </div>
+
+        <div class="stat-item">
+          <span class="stat-label">Revenue Balance</span>
+          <span id="stat-revenue" class="stat-val money">$0</span>
+        </div>
+
+        <div class="stat-item">
+          <span class="stat-label">Active Trunks</span>
+          <span id="stat-cables" class="stat-val">0/4</span>
+        </div>
+      </div>
+
+      <!-- Right: Shift Progress & Controls -->
+      <div class="hud-panel">
+        <div class="stat-item">
+          <span id="stat-shift" class="stat-label">Shift 1</span>
+          <span id="stat-timer" class="stat-val">60s</span>
+        </div>
+
+        <div class="controls-group">
+          <a href="../index.html" class="hud-btn" style="text-decoration:none; display:inline-flex; align-items:center;" title="Return to Arcade Hub">← Arcade Hub</a>
+          <button id="btn-speed" class="hud-btn" title="Toggle Simulation Speed">1x Speed</button>
+          <button id="btn-pause" class="hud-btn" title="Pause / Resume (Spacebar)">⏸ Pause</button>
+          <button id="btn-audio" class="hud-btn" title="Toggle Sound FX">🔊 Sound</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- RUSH HOUR DYNAMIC EVENT BANNER -->
+    <div id="event-banner">🔥 RUSH HOUR: SUDIRMAN CORRIDOR (2.5x REVENUE!)</div>
+
+    <!-- LIVE TELEMETRY LOGS OVERLAY -->
+    <div id="live-telemetry"></div>
+
+    <!-- ACTIVE POWER-UP STATUS OVERLAY -->
+    <div id="active-powerup-indicator"></div>
+
+    <!-- INTERACTIVE NODE INSPECTOR POPOVER CARD -->
+    <div id="node-inspector">
+      <div class="inspector-header">
+        <div>
+          <div id="inspect-name" class="inspector-title">Sudirman Landmark Megaboard</div>
+          <span id="inspect-format" class="inspector-badge">Playlog Roadside</span>
+        </div>
+        <button class="inspector-close-btn" onclick="window.closeInspector()">✕</button>
+      </div>
+
+      <div class="inspector-meta">
+        <span>Format: <strong id="inspect-aspect">16:9 Landscape</strong></span>
+        <span>Reach: <strong id="inspect-footfall">480,000 / day</strong></span>
+      </div>
+
+      <div class="inspector-meta" style="border-left: 2px solid var(--playlog-blue);">
+        <span>Live SOV: <strong id="inspect-campaign" style="color: var(--playlog-blue);">Tokopedia WIB 15s</strong></span>
+      </div>
+
+      <!-- Explanatory Cache Meter -->
+      <div class="cache-meter-box">
+        <div class="cache-meter-header">
+          <span style="color: var(--text-muted); text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px;">Ad Playlist Cache</span>
+          <span id="inspect-cache-val" style="color: var(--playlog-green); font-family: var(--font-mono);">55s / 70s (78%)</span>
+        </div>
+        <div class="cache-bar-bg">
+          <div id="inspect-cache-fill" class="cache-bar-fill" style="width: 78%;"></div>
+        </div>
+        <div class="cache-explanation">
+          Stores scheduled video loops. If cache reaches 0s, display turns dark and breaches SLA.
+        </div>
+      </div>
+
+      <!-- Interactive Actions -->
+      <div class="inspector-actions">
+        <button id="btn-inspect-sync" class="btn-inspect-action" onclick="window.inspectFastSync()" title="Instantly top-up 30s ad loop">
+          <span>⚡ Emergency Fast-Sync (+30s)</span>
+          <span style="color: var(--playlog-green); font-family: var(--font-mono);">$1,200</span>
+        </button>
+        <button id="btn-inspect-upgrade" class="btn-inspect-action" onclick="window.inspectUpgradePriority()" title="Upgrade to 4K LED (+50% eCPM & +20s Cache cap)">
+          <span>🚀 Tier 2 4K Upgrade</span>
+          <span style="color: var(--playlog-green); font-family: var(--font-mono);">$5,000</span>
+        </button>
+        <button id="btn-inspect-reboot" class="btn-inspect-action" onclick="window.inspectReboot()" style="display: none; border-color: var(--color-placebased); color: var(--color-placebased);">
+          <span>🛠️ Reboot Glitched Player</span>
+          <span>FREE</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN GAME CANVAS -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- BOTTOM DOCK: POWER-UPS & INFRASTRUCTURE UPGRADE SHOP -->
+    <footer id="bottom-dock">
+      <!-- Left: Free Power-Ups Hotbar -->
+      <div class="powerup-bar">
+        <div class="powerup-label-box">
+          <span class="powerup-label">Power-Ups</span>
+          <span class="powerup-sub">Level-up rewards</span>
+        </div>
+        <button id="btn-pow-sentinel" class="powerup-btn" onclick="window.triggerPowerUp('sentinel')" title="Hotkey [5]: Autonomous NOC Sentinel (Auto-Restore All Screens & Glitches for 40s)">
+          <span class="powerup-key">5</span> 🤖 Self-Restore <span class="powerup-count">x1</span>
+        </button>
+        <button id="btn-pow-flush" class="powerup-btn" onclick="window.triggerPowerUp('flush')" title="Hotkey [1]: Refill all screens to 100%">
+          <span class="powerup-key">1</span> 🌊 Flush <span class="powerup-count">x1</span>
+        </button>
+        <button id="btn-pow-shield" class="powerup-btn" onclick="window.triggerPowerUp('shield')" title="Hotkey [2]: 35s Glitch Immunity & SLA Lock">
+          <span class="powerup-key">2</span> 🛡️ Shield <span class="powerup-count">x0</span>
+        </button>
+        <button id="btn-pow-turbo" class="powerup-btn" onclick="window.triggerPowerUp('turbo')" title="Hotkey [3]: 3x Packet Speed for 22s">
+          <span class="powerup-key">3</span> ⚡ Turbo <span class="powerup-count">x0</span>
+        </button>
+        <button id="btn-pow-surge" class="powerup-btn" onclick="window.triggerPowerUp('surge')" title="Hotkey [4]: 3x eCPM on next 50 playlogs">
+          <span class="powerup-key">4</span> 💎 Surge <span class="powerup-count">x0</span>
+        </button>
+      </div>
+
+      <!-- Right: Infrastructure Shop (Purchased with Revenue $) -->
+      <div class="shop-bar">
+        <div class="shop-header">
+          <span class="shop-title">Infrastructure Shop</span>
+          <span class="shop-sub">Invest Revenue</span>
+        </div>
+        <button id="buy-trunk" class="upgrade-buy-btn" onclick="window.buyUpgrade('trunk')" title="Buy +1 Active Fiber Cable Trunk">
+          <span class="buy-title">⚡ +1 Trunk Cable</span>
+          <span class="buy-cost">$5,000</span>
+        </button>
+        <button id="buy-bandwidth" class="upgrade-buy-btn" onclick="window.buyUpgrade('bandwidth')" title="Upgrade Fiber Bandwidth (+25% Velocity)">
+          <span class="buy-title">🚀 +25% Speed</span>
+          <span class="buy-cost">$4,000</span>
+        </button>
+        <button id="buy-cache" class="upgrade-buy-btn" onclick="window.buyUpgrade('cache')" title="Deploy Regional Edge Relay: Hub for local screens & MobileLED wireless sync">
+          <span class="buy-title">🏢 Edge Relay</span>
+          <span class="buy-cost">$10,000</span>
+        </button>
+        <button id="buy-buffer" class="upgrade-buy-btn" onclick="window.buyUpgrade('buffer')" title="Expand Screen Playlist Storage (+20s capacity, -15% drain)">
+          <span class="buy-title">🔋 Expand Storage</span>
+          <span class="buy-cost">$6,000</span>
+        </button>
+      </div>
+    </footer>
+
+    <!-- MODAL: START GAME / REALISTIC INSTRUCTIONS -->
+    <div id="start-modal" class="modal-overlay active">
+      <div class="modal-card">
+        <div class="modal-quote-tag">Playlog Flagship Network</div>
+        <h2>Playlog Dispatcher</h2>
+        <p>
+          Manage 5 premier landmark digital screens across Jakarta's high-traffic arterial and commercial hubs. Clean, strategic, and realistic DOOH asset operations.
+        </p>
+
+        <!-- Concept Explanations -->
+        <div class="concept-explain-grid">
+          <div class="concept-box">
+            <span class="concept-box-title">🏙️ 5 Flagship DOOH Assets</span>
+            <span class="concept-box-desc">
+              No screen clutter: You operate 5 iconic screens (Sudirman Megaboard, Thamrin Videotron, Bandara T3 Pillar, SCBD Spectacular, Kuningan Digital) with live rotating brand campaigns.
+            </span>
+          </div>
+
+          <div class="concept-box">
+            <span class="concept-box-title">🤖 AI Self-Restore Sentinel [5]</span>
+            <span class="concept-box-desc">
+              New power-up: Deploys autonomous Playlog NOC AI bots for 40s. Automatically heals any glitches and tops up low playlist storage on all screens on autopilot!
+            </span>
+          </div>
+
+          <div class="concept-box">
+            <span class="concept-box-title">🚚 StickEarn MobileLED Fleet</span>
+            <span class="concept-box-desc">
+              MobileLED trucks patrol the city loop between landmark displays. Sync wirelessly via Master SSP or District Relays for <strong>+$2,600+ eCPM</strong>. Click trucks to honk!
+            </span>
+          </div>
+
+          <div class="concept-box">
+            <span class="concept-box-title">🔋 Playlist Storage &amp; Relays</span>
+            <span class="concept-box-desc">
+              Screens hold offline ad loops (seconds remaining). Edge Relays act as regional distribution towers, enabling wireless MobileLED sync and localized routing.
+            </span>
+          </div>
+        </div>
+
+        <button id="btn-start" class="btn-primary">Initialize Network Operations</button>
+      </div>
+    </div>
+
+    <!-- MODAL: SHIFT LEVEL UP (FREE POWER-UP SELECTION) -->
+    <div id="upgrade-modal" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-quote-tag">Level Up Reward</div>
+        <h2 id="upgrade-shift-title">Shift Complete!</h2>
+        <p>Choose an operational Free Power-Up to add to your quick-inventory:</p>
+        <div id="upgrade-options" class="upgrade-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: GAME OVER -->
+    <div id="game-over-modal" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-quote-tag" style="border-color: var(--color-placebased); color: var(--color-placebased); background: rgba(220,70,72,0.1);">Incident Escalation</div>
+        <h2 style="color: var(--color-placebased);">Network SLA Disrupted</h2>
+        <p id="game-over-reason">SLA Uptime dropped below acceptable threshold.</p>
+        <div style="display: flex; justify-content: space-around; margin: 10px 0; background: rgba(255,255,255,0.02); padding: 16px; border-radius: 10px; border: 1px solid var(--border-subtle);">
+          <div class="stat-item">
+            <span class="stat-label">Verified Playlogs</span>
+            <span id="final-impressions" class="stat-val" style="font-size: 22px;">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Total Revenue</span>
+            <span id="final-revenue" class="stat-val" style="font-size: 22px; color: var(--playlog-green);">$0</span>
+          </div>
+        </div>
+        <button id="btn-restart" class="btn-primary">Re-authenticate Network</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="audio.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
