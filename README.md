@@ -1,4 +1,4 @@
-# Antigravity Games Hub
+# Agelius Games Hub
 
 A unified arcade portal and collection of zero-dependency browser games crafted with pure HTML5 Canvas, Vanilla ES6 JavaScript, and Web Audio API synthesis.
 
