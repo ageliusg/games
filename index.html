@@ -25,6 +25,7 @@
       --neon-pink: #ff007f;
       --neon-yellow: #ffe600;
       --neon-green: #39ff14;
+      --neon-emerald: #10b981;
       --neon-purple: #b026ff;
       --neon-orange: #ff6600;
 
@@ -98,23 +99,23 @@
       display: flex;
       flex-direction: column;
       gap: 32px;
-      position: relative;
-      z-index: 10;
     }
 
-    /* MARQUEE TOP BAR */
+    /* TOP MARQUEE ILLUMINATED STRIP */
     .marquee-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 12px 20px;
-      background: #0d061a;
-      border: 3px solid var(--neon-pink);
+      background: #0d081a;
+      border: 3px solid var(--border-beveled);
       border-radius: 8px;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
       box-shadow: 
-        0 0 15px rgba(255, 0, 127, 0.4),
-        inset 0 0 15px rgba(255, 0, 127, 0.2);
+        0 0 20px rgba(176, 38, 255, 0.25),
+        inset 0 0 15px rgba(0, 240, 255, 0.15);
+      position: relative;
     }
 
     .brand-marquee {
@@ -126,23 +127,18 @@
 
     .pixel-logo {
       font-size: 24px;
-      text-shadow: 0 0 10px var(--neon-yellow);
-      animation: coinBounce 1s infinite alternate ease-in-out;
-    }
-
-    @keyframes coinBounce {
-      from { transform: translateY(0); }
-      to { transform: translateY(-3px); }
+      line-height: 1;
+      filter: drop-shadow(0 0 8px var(--neon-yellow));
     }
 
     .brand-name {
       font-family: var(--font-arcade);
       font-size: 14px;
       color: #fff;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
       text-shadow: 
-        0 0 6px var(--neon-cyan),
-        0 0 12px var(--neon-cyan);
+        0 0 8px var(--neon-cyan),
+        0 0 16px var(--neon-cyan);
     }
 
     .brand-name span {
@@ -244,137 +240,135 @@
     .score-val.cyan { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan); }
     .score-val.yellow { color: var(--neon-yellow); text-shadow: 0 0 8px var(--neon-yellow); }
     .score-val.pink { color: var(--neon-pink); text-shadow: 0 0 8px var(--neon-pink); }
+    .score-val.emerald { color: var(--neon-emerald); text-shadow: 0 0 8px var(--neon-emerald); }
 
     /* HERO ARCADE BILLBOARD */
     .hero-billboard {
       text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
-      padding: 12px 8px;
+      padding: 24px 16px;
+      background: linear-gradient(180deg, #140b2a 0%, #0d061c 100%);
+      border: 3px solid #3d1c68;
+      border-radius: 10px;
+      box-shadow: 
+        inset 0 0 30px rgba(0, 0, 0, 0.8),
+        0 10px 25px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
     }
 
     .hero-glitch-title {
       font-family: var(--font-arcade);
-      font-size: 38px;
+      font-size: 34px;
       line-height: 1.3;
       color: #fff;
-      text-transform: uppercase;
-      letter-spacing: 2px;
       text-shadow: 
         3px 3px 0 var(--neon-pink),
-        -3px -3px 0 var(--neon-cyan),
-        0 0 20px rgba(255, 0, 127, 0.6);
+        -3px -3px 0 var(--neon-cyan);
+      margin-bottom: 12px;
+      letter-spacing: 2px;
     }
 
     .hero-subtitle {
       font-family: var(--font-terminal);
       font-size: 26px;
       color: var(--neon-yellow);
-      letter-spacing: 2px;
-      text-shadow: 0 0 10px rgba(255, 230, 0, 0.6);
+      letter-spacing: 3px;
+      text-shadow: 0 0 10px var(--neon-yellow);
+      margin-bottom: 16px;
     }
 
     .arcade-chassis-info {
-      font-family: var(--font-pixel);
-      font-size: 13px;
-      color: var(--text-dim);
       max-width: 720px;
-      line-height: 1.7;
+      margin: 0 auto;
+      color: var(--text-dim);
+      font-size: 13px;
+      line-height: 1.6;
     }
 
-    /* CONTROLS TERMINAL (SEARCH + FILTER BUTTONS) */
+    /* ARCADE SYSTEM TERMINAL CONTROLS (SEARCH & SWITCHES) */
     .controls-terminal {
-      background: #0e081e;
-      border: 2px solid #3c1e69;
-      border-radius: 6px;
-      padding: 14px 18px;
       display: flex;
-      flex-wrap: wrap;
-      align-items: center;
       justify-content: space-between;
-      gap: 14px;
-      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      background: #090514;
+      border: 2px solid #2d184d;
+      border-radius: 8px;
+      padding: 12px 18px;
     }
 
     .terminal-search {
-      flex: 1;
-      min-width: 260px;
       display: flex;
       align-items: center;
       gap: 10px;
-      background: #06030c;
-      border: 1px solid #582e99;
-      border-radius: 4px;
-      padding: 8px 12px;
+      flex: 1;
+      min-width: 260px;
     }
 
     .terminal-prompt {
       font-family: var(--font-arcade);
-      font-size: 10px;
-      color: var(--neon-pink);
+      font-size: 11px;
+      color: var(--neon-green);
     }
 
     .terminal-input {
-      background: transparent;
-      border: none;
-      outline: none;
+      background: #140b26;
+      border: 1px solid #4a277d;
+      border-radius: 4px;
+      padding: 8px 12px;
       color: #fff;
-      font-family: var(--font-arcade);
-      font-size: 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
       width: 100%;
-      letter-spacing: 1px;
+      outline: none;
+      transition: all 0.2s;
     }
 
-    .terminal-input::placeholder {
-      color: #554477;
+    .terminal-input:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
     }
 
     .filter-switches {
       display: flex;
-      align-items: center;
+      flex-wrap: wrap;
       gap: 8px;
-      overflow-x: auto;
     }
 
     .retro-switch-btn {
-      background: #140b27;
-      border: 1px solid #552d94;
+      background: #110824;
+      border: 1px solid #48237d;
       border-radius: 4px;
-      padding: 7px 12px;
+      padding: 6px 12px;
       color: var(--text-dim);
-      font-family: var(--font-pixel);
-      font-size: 12px;
+      font-family: var(--font-arcade);
+      font-size: 9px;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
       transition: all 0.15s;
     }
 
     .retro-switch-btn:hover {
-      background: #231244;
       color: #fff;
-      border-color: var(--neon-cyan);
+      border-color: var(--neon-pink);
     }
 
     .retro-switch-btn.active {
-      background: rgba(0, 240, 255, 0.12);
-      border-color: var(--neon-cyan);
-      color: var(--neon-cyan);
-      box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
-      font-weight: 700;
+      background: var(--neon-pink);
+      color: #08040d;
+      border-color: #fff;
+      box-shadow: 0 0 12px rgba(255, 0, 127, 0.7);
+      font-weight: bold;
     }
 
-    /* ARCADE CABINETS GRID */
+    /* CABINETS MATRIX (2x2 BALANCED GRID ON DESKTOP) */
     .cabinets-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 28px;
     }
 
-    @media (max-width: 960px) {
+    @media (max-width: 768px) {
       .cabinets-grid {
         grid-template-columns: 1fr;
       }
@@ -648,7 +642,7 @@
       </div>
       <div class="score-block">
         <span class="score-title">CABINETS</span>
-        <span class="score-val yellow">3 SLOTS</span>
+        <span class="score-val yellow">4 SLOTS</span>
       </div>
       <div class="score-block">
         <span class="score-title">ENGINE RENDER</span>
@@ -663,24 +657,25 @@
     <!-- HERO BILLBOARD -->
     <section class="hero-billboard">
       <h1 class="hero-glitch-title">Agelius Retro Arcade</h1>
-      <p class="hero-subtitle">>> SELECT GAME CARTRIDGE & HIT START &lt;&lt;</p>
+      <p class="hero-subtitle">&gt;&gt; SELECT GAME CARTRIDGE & HIT START &lt;&lt;</p>
       <p class="arcade-chassis-info">
-        Handcrafted 80s/90s retrospective arcade portal. Powered by native 60 FPS HTML5 Canvas loops, procedural 8-bit Web Audio chiptune synthesis, and zero external runtime dependencies.
+        Handcrafted 80s/90s retrospective arcade portal. Powered by native HTML5 Canvas loops, mathematical deterministic simulation engines, and procedural 8-bit Web Audio chiptune synthesis.
       </p>
     </section>
 
     <!-- CONTROLS TERMINAL (SEARCH + DIP SWITCH FILTERS) -->
     <section class="controls-terminal">
       <div class="terminal-search">
-        <span class="terminal-prompt">SYS_QUERY:></span>
+        <span class="terminal-prompt">SYS_QUERY:&gt;</span>
         <input type="text" id="arcadeSearch" class="terminal-input" placeholder="TYPE TITLE OR KEYWORD..." autocomplete="off">
       </div>
 
       <div class="filter-switches" id="cartridgeFilters">
-        <button class="retro-switch-btn active" data-cat="all">ALL CARTRIDGES (3)</button>
+        <button class="retro-switch-btn active" data-cat="all">ALL CARTRIDGES (4)</button>
         <button class="retro-switch-btn" data-cat="simulation">SIMULATION</button>
         <button class="retro-switch-btn" data-cat="puzzle">PUZZLE</button>
         <button class="retro-switch-btn" data-cat="lifesim">LIFE SIM</button>
+        <button class="retro-switch-btn" data-cat="sports">SPORTS / STRATEGY</button>
       </div>
     </section>
 
@@ -795,6 +790,42 @@
         </div>
       </article>
 
+      <!-- CABINET 4: PITCHCORE FOOTBALL MANAGEMENT SIM -->
+      <article class="arcade-card"
+               data-cat="simulation sports"
+               data-keywords="pitchcore football manager soccer tactics duel xg simulator formation 5x5 box-muller stats coach match premier league"
+               style="--cabinet-border: #10b981; --cabinet-glow: rgba(16, 185, 129, 0.45);">
+        
+        <div class="cabinet-marquee">
+          <span class="marquee-slot-badge" style="color: #10b981; text-shadow: 0 0 8px #10b981;">SLOT 04 // PITCHCORE</span>
+          <span class="marquee-icon-box" style="text-shadow: 0 0 12px #10b981;">⚽</span>
+        </div>
+
+        <div class="cabinet-body">
+          <div class="cabinet-genre" style="color: #10b981;">COIN-OP FOOTBALL TACTICS & SIM</div>
+          <h2 class="cabinet-title">PitchCore: Deep Football Manager</h2>
+          <p class="cabinet-desc">
+            Ultra-deep, mathematically rigorous football management simulation. Features Box-Muller Gaussian player universes, Pareto club economies, 5x5 spatial tactics with dynamic role drift (Inverted Wing-Backs, Mezzalas), discrete 20s tick match duels, and 2D spatial xG shot maps.
+          </p>
+
+          <div class="cartridge-specs">
+            <span class="spec-pill" style="border-color: #064e3b;">20S TICK ENGINE</span>
+            <span class="spec-pill" style="border-color: #064e3b;">BOX-MULLER CA</span>
+            <span class="spec-pill" style="border-color: #064e3b;">5X5 TACTICS</span>
+            <span class="spec-pill" style="border-color: #064e3b;">SPATIAL xG</span>
+          </div>
+        </div>
+
+        <div class="cabinet-footer">
+          <div class="coin-slot-tag">
+            <span>🪙</span> 1 COIN = 1 PLAY
+          </div>
+          <a href="football-manager/index.html" class="btn-coin-start" style="background: linear-gradient(180deg, #10b981, #064e3b); box-shadow: 0 4px 0 #000, 0 0 14px rgba(16, 185, 129, 0.6);">
+            START 1P [4] <span>▶</span>
+          </a>
+        </div>
+      </article>
+
       <!-- NO CARTRIDGES FOUND -->
       <div id="noCartridges" class="no-cartridges">
         <div>[!] NO CARTRIDGES MATCHED QUERY</div>
@@ -808,6 +839,7 @@
       <span><span class="arcade-key-pill">[1]</span> PLAYLOG</span>
       <span><span class="arcade-key-pill">[2]</span> OVERDRIVE</span>
       <span><span class="arcade-key-pill">[3]</span> LIFELINES</span>
+      <span><span class="arcade-key-pill">[4]</span> PITCHCORE</span>
       <span><span class="arcade-key-pill">[C]</span> TOGGLE CRT</span>
       <span><span class="arcade-key-pill">[M]</span> TOGGLE AUDIO</span>
       <span><span class="arcade-key-pill">[/]</span> SEARCH</span>
@@ -851,85 +883,50 @@
         if (this.muted) return;
         this.init();
         if (!this.ctx) return;
-        try {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          const now = this.ctx.currentTime;
 
-          osc.type = 'square';
-          osc.frequency.setValueAtTime(600, now);
-          osc.frequency.setValueAtTime(900, now + 0.02);
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(440, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.05);
 
-          gain.gain.setValueAtTime(0.04, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
 
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
 
-          osc.start(now);
-          osc.stop(now + 0.04);
-        } catch(e) {}
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.05);
       }
 
-      // Authentic retro Coin Insert "Ch-Ching!"
+      // 8-bit coin sound on game launch
       playCoin() {
         if (this.muted) return;
         this.init();
         if (!this.ctx) return;
-        try {
-          const now = this.ctx.currentTime;
-          [987.77, 1318.51].forEach((freq, idx) => {
-            const osc = this.ctx.createOscillator();
-            const gain = this.ctx.createGain();
-            const t = now + idx * 0.07;
 
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(freq, t);
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(987.77, t); // B5
+        osc.frequency.setValueAtTime(1318.51, t + 0.08); // E6
 
-            gain.gain.setValueAtTime(0.07, t);
-            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+        gain.gain.setValueAtTime(0.08, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
 
-            osc.connect(gain);
-            gain.connect(this.ctx.destination);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
 
-            osc.start(t);
-            osc.stop(t + 0.28);
-          });
-        } catch(e) {}
-      }
-
-      // 8-bit Start Fanfare
-      playStart() {
-        if (this.muted) return;
-        this.init();
-        if (!this.ctx) return;
-        try {
-          const notes = [523.25, 659.25, 783.99, 1046.50];
-          const now = this.ctx.currentTime;
-          notes.forEach((freq, idx) => {
-            const osc = this.ctx.createOscillator();
-            const gain = this.ctx.createGain();
-            const t = now + idx * 0.06;
-
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(freq, t);
-
-            gain.gain.setValueAtTime(0.09, t);
-            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-
-            osc.connect(gain);
-            gain.connect(this.ctx.destination);
-
-            osc.start(t);
-            osc.stop(t + 0.2);
-          });
-        } catch(e) {}
+        osc.start(t);
+        osc.stop(t + 0.35);
       }
     }
 
     const retroAudio = new RetroArcadeAudio();
 
-    // DOM Controls
+    // DOM Elements
     const crtOverlay = document.getElementById('crtOverlay');
     const crtToggleBtn = document.getElementById('crtToggleBtn');
     const soundToggleBtn = document.getElementById('soundToggleBtn');
@@ -982,7 +979,7 @@
 
     document.querySelectorAll('.btn-coin-start').forEach(btn => {
       btn.addEventListener('mouseenter', () => retroAudio.playBlip());
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', () => {
         retroAudio.playCoin();
       });
     });
@@ -1053,6 +1050,9 @@
       } else if (e.key === '3') {
         retroAudio.playCoin();
         window.location.href = 'lifelines/index.html';
+      } else if (e.key === '4') {
+        retroAudio.playCoin();
+        window.location.href = 'football-manager/index.html';
       } else if (e.key === 'c' || e.key === 'C') {
         crtToggleBtn.click();
       } else if (e.key === 'm' || e.key === 'M') {
