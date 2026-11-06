@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agelius Games Hub | Next-Gen Web Arcade</title>
-  <meta name="description" content="A curated collection of zero-dependency browser games crafted with pure HTML5 Canvas, Vanilla ES6 JavaScript, and Web Audio API synthesis by Agelius.">
+  <title>Agelius Arcade | Retro Coin-Op Game Hub</title>
+  <meta name="description" content="A retrospective 80s/90s coin-op arcade hub featuring zero-dependency browser games by Agelius.">
   
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -12,32 +12,30 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=VT323&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg-space: #060911;
-      --bg-surface: rgba(13, 19, 34, 0.75);
-      --bg-card: rgba(16, 24, 44, 0.65);
-      --bg-card-hover: rgba(22, 33, 60, 0.85);
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-glow: rgba(56, 189, 248, 0.4);
+      --bg-dark: #080511;
+      --bg-cabinet: #110b22;
+      --bg-cabinet-hover: #191033;
+      --border-beveled: #2d184d;
       
-      --cyan: #38bdf8;
-      --blue: #3b82f6;
-      --emerald: #10b981;
-      --amber: #f59e0b;
-      --purple: #a855f7;
-      --magenta: #ec4899;
+      --neon-cyan: #00f0ff;
+      --neon-pink: #ff007f;
+      --neon-yellow: #ffe600;
+      --neon-green: #39ff14;
+      --neon-purple: #b026ff;
+      --neon-orange: #ff6600;
 
-      --text-main: #f8fafc;
-      --text-sub: #94a3b8;
-      --text-muted: #64748b;
-      
-      --radius-sm: 8px;
-      --radius-md: 14px;
-      --radius-lg: 22px;
-      --radius-full: 9999px;
+      --text-arcade: #f8fafc;
+      --text-dim: #9d8ec2;
+      --text-retro: #00f0ff;
+
+      --font-arcade: 'Press Start 2P', monospace;
+      --font-pixel: 'Silkscreen', monospace;
+      --font-terminal: 'VT323', monospace;
+      --font-mono: 'JetBrains Mono', monospace;
     }
 
     * {
@@ -47,908 +45,789 @@
     }
 
     body {
-      background-color: var(--bg-space);
+      background-color: var(--bg-dark);
       background-image: 
-        radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.15) 0%, transparent 60%),
-        radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
-        radial-gradient(circle at 15% 70%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
-        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px;
-      color: var(--text-main);
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        radial-gradient(circle at 50% 10%, rgba(176, 38, 255, 0.16) 0%, transparent 60%),
+        radial-gradient(circle at 85% 60%, rgba(0, 240, 255, 0.12) 0%, transparent 50%),
+        linear-gradient(rgba(255, 0, 127, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+      color: var(--text-arcade);
+      font-family: var(--font-pixel);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      overflow-x: hidden;
       position: relative;
+      overflow-x: hidden;
+      padding-bottom: 40px;
     }
 
-    /* TOP AMBIENT GLOW LINE */
-    .top-glow-line {
+    /* CRT SCANLINE OVERLAY */
+    .crt-overlay {
       position: fixed;
       top: 0;
       left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #38bdf8 25%, #a855f7 50%, #ec4899 75%, transparent);
-      z-index: 100;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+      ), linear-gradient(
+        90deg,
+        rgba(255, 0, 0, 0.03),
+        rgba(0, 255, 0, 0.01),
+        rgba(0, 0, 255, 0.03)
+      );
+      background-size: 100% 4px, 6px 100%;
+      opacity: 0.75;
+      transition: opacity 0.2s;
     }
 
-    /* GLOBAL CONTAINER */
-    .container {
+    body.no-crt .crt-overlay {
+      display: none;
+    }
+
+    /* VINTAGE RETRO CONTAINER */
+    .arcade-container {
       width: 100%;
-      max-width: 1180px;
-      padding: 24px 24px 64px;
+      max-width: 1160px;
+      padding: 24px 20px 48px;
       display: flex;
       flex-direction: column;
-      gap: 36px;
+      gap: 32px;
+      position: relative;
+      z-index: 10;
     }
 
-    /* TOP NAVIGATION BAR */
-    .navbar {
+    /* MARQUEE TOP BAR */
+    .marquee-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      padding: 14px 22px;
-      background: rgba(13, 19, 34, 0.7);
-      backdrop-filter: blur(18px);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-full);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      padding: 12px 20px;
+      background: #0d061a;
+      border: 3px solid var(--neon-pink);
+      border-radius: 8px;
+      box-shadow: 
+        0 0 15px rgba(255, 0, 127, 0.4),
+        inset 0 0 15px rgba(255, 0, 127, 0.2);
     }
 
-    .nav-brand {
+    .brand-marquee {
       display: flex;
       align-items: center;
       gap: 12px;
       text-decoration: none;
+    }
+
+    .pixel-logo {
+      font-size: 24px;
+      text-shadow: 0 0 10px var(--neon-yellow);
+      animation: coinBounce 1s infinite alternate ease-in-out;
+    }
+
+    @keyframes coinBounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-3px); }
+    }
+
+    .brand-name {
+      font-family: var(--font-arcade);
+      font-size: 14px;
       color: #fff;
+      letter-spacing: 1px;
+      text-shadow: 
+        0 0 6px var(--neon-cyan),
+        0 0 12px var(--neon-cyan);
     }
 
-    .brand-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #0284c7, #a855f7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+    .brand-name span {
+      color: var(--neon-pink);
+      text-shadow: 
+        0 0 6px var(--neon-pink),
+        0 0 12px var(--neon-pink);
     }
 
-    .brand-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .brand-title span {
-      background: linear-gradient(135deg, #38bdf8, #c084fc);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .nav-center {
+    /* BLINKING COIN-OP STATUS */
+    .coin-status {
+      font-family: var(--font-arcade);
+      font-size: 10px;
+      color: var(--neon-yellow);
+      letter-spacing: 1px;
       display: flex;
       align-items: center;
       gap: 8px;
+      text-shadow: 0 0 8px var(--neon-yellow);
     }
 
-    .pulse-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 14px;
-      border-radius: var(--radius-full);
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: var(--emerald);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
+    .blink-text {
+      animation: retroBlink 1s infinite steps(1);
     }
 
-    .pulse-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--emerald);
-      box-shadow: 0 0 8px var(--emerald);
-      animation: pulseAnim 2s infinite ease-in-out;
+    @keyframes retroBlink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
     }
 
-    @keyframes pulseAnim {
-      0%, 100% { opacity: 0.4; transform: scale(0.9); }
-      50% { opacity: 1; transform: scale(1.2); }
-    }
-
-    .nav-actions {
+    .marquee-actions {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .icon-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-full);
-      padding: 8px 14px;
-      color: var(--text-sub);
-      font-size: 13px;
-      font-weight: 600;
+    .retro-btn {
+      background: #190e2f;
+      border: 2px solid var(--neon-cyan);
+      border-radius: 4px;
+      padding: 6px 14px;
+      color: var(--neon-cyan);
+      font-family: var(--font-arcade);
+      font-size: 9px;
+      letter-spacing: 1px;
       cursor: pointer;
-      display: flex;
+      text-decoration: none;
+      display: inline-flex;
       align-items: center;
       gap: 6px;
-      text-decoration: none;
-      transition: all 0.2s;
+      box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+      transition: all 0.15s;
     }
 
-    .icon-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.2);
+    .retro-btn:hover {
+      background: var(--neon-cyan);
+      color: #08040d;
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.8);
+      transform: translateY(-2px);
     }
 
-    /* HERO SECTION */
-    .hero-banner {
+    .retro-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* LEADERBOARD / HI-SCORE STRIP */
+    .hiscore-strip {
+      background: #0b0717;
+      border: 2px dashed #402866;
+      border-radius: 6px;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-family: var(--font-arcade);
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+
+    .score-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .score-title {
+      font-size: 9px;
+      color: var(--text-dim);
+    }
+
+    .score-val {
+      color: var(--neon-green);
+      text-shadow: 0 0 8px var(--neon-green);
+    }
+
+    .score-val.cyan { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan); }
+    .score-val.yellow { color: var(--neon-yellow); text-shadow: 0 0 8px var(--neon-yellow); }
+    .score-val.pink { color: var(--neon-pink); text-shadow: 0 0 8px var(--neon-pink); }
+
+    /* HERO ARCADE BILLBOARD */
+    .hero-billboard {
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
-      padding: 24px 16px 12px;
-      position: relative;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 16px;
-      border-radius: var(--radius-full);
-      background: rgba(56, 189, 248, 0.08);
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      color: var(--cyan);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    .hero-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 54px;
-      font-weight: 900;
-      letter-spacing: -1.5px;
-      line-height: 1.1;
-      max-width: 820px;
-    }
-
-    .hero-title .gradient-text {
-      background: linear-gradient(135deg, #ffffff 20%, #38bdf8 65%, #c084fc 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 10px 30px rgba(56, 189, 248, 0.2);
-    }
-
-    .hero-desc {
-      color: var(--text-sub);
-      font-size: 17px;
-      max-width: 680px;
-      line-height: 1.6;
-    }
-
-    /* TELEMETRY METRIC STRIP */
-    .metric-strip {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
       gap: 14px;
-      background: rgba(13, 19, 34, 0.5);
-      border: 1px solid var(--border-subtle);
-      border-radius: 18px;
-      padding: 16px 20px;
-      backdrop-filter: blur(12px);
+      padding: 12px 8px;
     }
 
-    .metric-item {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      padding: 4px 8px;
-      border-right: 1px solid rgba(255, 255, 255, 0.06);
-    }
-    .metric-item:last-child {
-      border-right: none;
-    }
-
-    .metric-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--text-muted);
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    .metric-val {
-      font-family: 'Outfit', sans-serif;
-      font-size: 20px;
-      font-weight: 800;
+    .hero-glitch-title {
+      font-family: var(--font-arcade);
+      font-size: 38px;
+      line-height: 1.3;
       color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 
+        3px 3px 0 var(--neon-pink),
+        -3px -3px 0 var(--neon-cyan),
+        0 0 20px rgba(255, 0, 127, 0.6);
     }
 
-    .metric-accent-cyan { color: var(--cyan); }
-    .metric-accent-emerald { color: var(--emerald); }
-    .metric-accent-purple { color: var(--purple); }
-    .metric-accent-amber { color: var(--amber); }
+    .hero-subtitle {
+      font-family: var(--font-terminal);
+      font-size: 26px;
+      color: var(--neon-yellow);
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(255, 230, 0, 0.6);
+    }
 
-    /* CONTROLS STRIP: SEARCH & FILTERS */
-    .controls-strip {
+    .arcade-chassis-info {
+      font-family: var(--font-pixel);
+      font-size: 13px;
+      color: var(--text-dim);
+      max-width: 720px;
+      line-height: 1.7;
+    }
+
+    /* CONTROLS TERMINAL (SEARCH + FILTER BUTTONS) */
+    .controls-terminal {
+      background: #0e081e;
+      border: 2px solid #3c1e69;
+      border-radius: 6px;
+      padding: 14px 18px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      margin-top: 4px;
+      gap: 14px;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
     }
 
-    .search-box {
+    .terminal-search {
       flex: 1;
-      min-width: 280px;
-      max-width: 420px;
-      position: relative;
+      min-width: 260px;
       display: flex;
       align-items: center;
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 14px;
-      font-size: 15px;
-      color: var(--text-muted);
-      pointer-events: none;
-    }
-
-    .search-input {
-      width: 100%;
-      background: rgba(13, 19, 34, 0.8);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-full);
-      padding: 11px 40px 11px 40px;
-      font-family: var(--font-main);
-      font-size: 14px;
-      color: #fff;
-      outline: none;
-      transition: all 0.2s;
-    }
-
-    .search-input:focus {
-      border-color: var(--cyan);
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
-      background: rgba(16, 24, 44, 0.95);
-    }
-
-    .search-input::placeholder {
-      color: var(--text-muted);
-    }
-
-    .kbd-shortcut {
-      position: absolute;
-      right: 14px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      padding: 2px 6px;
-      background: rgba(255, 255, 255, 0.08);
+      gap: 10px;
+      background: #06030c;
+      border: 1px solid #582e99;
       border-radius: 4px;
-      color: var(--text-muted);
+      padding: 8px 12px;
     }
 
-    .filter-tabs {
+    .terminal-prompt {
+      font-family: var(--font-arcade);
+      font-size: 10px;
+      color: var(--neon-pink);
+    }
+
+    .terminal-input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-family: var(--font-arcade);
+      font-size: 10px;
+      width: 100%;
+      letter-spacing: 1px;
+    }
+
+    .terminal-input::placeholder {
+      color: #554477;
+    }
+
+    .filter-switches {
       display: flex;
       align-items: center;
       gap: 8px;
       overflow-x: auto;
-      padding-bottom: 4px;
     }
 
-    .filter-btn {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-sub);
-      border-radius: var(--radius-full);
-      padding: 8px 16px;
-      font-size: 13px;
-      font-weight: 600;
+    .retro-switch-btn {
+      background: #140b27;
+      border: 1px solid #552d94;
+      border-radius: 4px;
+      padding: 7px 12px;
+      color: var(--text-dim);
+      font-family: var(--font-pixel);
+      font-size: 12px;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.2s;
-      white-space: nowrap;
+      transition: all 0.15s;
     }
 
-    .filter-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
+    .retro-switch-btn:hover {
+      background: #231244;
       color: #fff;
+      border-color: var(--neon-cyan);
     }
 
-    .filter-btn.active {
-      background: rgba(56, 189, 248, 0.15);
-      border-color: var(--cyan);
-      color: var(--cyan);
+    .retro-switch-btn.active {
+      background: rgba(0, 240, 255, 0.12);
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
       font-weight: 700;
     }
 
-    /* GAME GRID */
-    .games-grid {
+    /* ARCADE CABINETS GRID */
+    .cabinets-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
     }
 
-    @media (max-width: 1024px) {
-      .games-grid {
-        grid-template-columns: repeat(2, 1fr);
+    @media (max-width: 960px) {
+      .cabinets-grid {
+        grid-template-columns: 1fr;
       }
-      .metric-strip {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .metric-item:nth-child(2) {
-        border-right: none;
+      .hero-glitch-title {
+        font-size: 26px;
       }
     }
 
-    @media (max-width: 680px) {
-      .games-grid {
-        grid-template-columns: 1fr;
-      }
-      .metric-strip {
-        grid-template-columns: 1fr;
-      }
-      .metric-item {
-        border-right: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        padding-bottom: 8px;
-      }
-      .metric-item:last-child {
-        border-bottom: none;
-      }
-      .hero-title {
-        font-size: 38px;
-      }
-      .navbar {
-        flex-direction: column;
-        gap: 12px;
-      }
-    }
-
-    /* GAME ARCADE CARD */
-    .game-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 24px;
+    /* RETRO ARCADE CABINET CARD */
+    .arcade-card {
+      background: var(--bg-cabinet);
+      border: 3px solid var(--cabinet-border, var(--neon-cyan));
+      border-radius: 12px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 20px;
+      gap: 18px;
       position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(20px);
-      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.8),
+        0 0 18px var(--cabinet-glow, rgba(0, 240, 255, 0.3)),
+        inset 0 0 20px rgba(0, 0, 0, 0.6);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .game-card:hover {
-      background: var(--bg-card-hover);
-      transform: translateY(-5px);
-      border-color: var(--card-border-glow, var(--border-glow));
-      box-shadow: 0 24px 48px -15px var(--card-shadow, rgba(56, 189, 248, 0.25));
+    .arcade-card:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 
+        0 15px 40px rgba(0, 0, 0, 0.9),
+        0 0 28px var(--cabinet-glow, rgba(0, 240, 255, 0.6)),
+        inset 0 0 25px rgba(0, 0, 0, 0.8);
     }
 
-    .game-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--card-accent, var(--cyan)), transparent);
-      opacity: 0.9;
-    }
-
-    /* CARD BANNER / VISUAL HEADER */
-    .card-banner {
-      width: 100%;
-      height: 110px;
-      border-radius: var(--radius-md);
-      background: var(--banner-bg, rgba(255, 255, 255, 0.03));
-      border: 1px solid rgba(255, 255, 255, 0.06);
+    /* CABINET MARQUEE / HEADER */
+    .cabinet-marquee {
+      background: #07040e;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      padding: 12px 14px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 16px 20px;
+      align-items: center;
       position: relative;
       overflow: hidden;
     }
 
-    .banner-graphic-bg {
-      position: absolute;
-      top: -20px;
-      right: -20px;
-      font-size: 110px;
-      opacity: 0.12;
-      user-select: none;
-      pointer-events: none;
-      filter: blur(2px);
-      transition: transform 0.4s ease;
+    .marquee-slot-badge {
+      font-family: var(--font-arcade);
+      font-size: 9px;
+      color: var(--cabinet-border, var(--neon-cyan));
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px var(--cabinet-border, var(--neon-cyan));
     }
 
-    .game-card:hover .banner-graphic-bg {
-      transform: scale(1.1) rotate(6deg);
-      opacity: 0.2;
+    .marquee-icon-box {
+      font-size: 28px;
+      text-shadow: 0 0 12px var(--cabinet-border, var(--neon-cyan));
     }
 
-    .banner-badge-box {
-      width: 58px;
-      height: 58px;
-      border-radius: 14px;
-      background: rgba(13, 19, 34, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 30px;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
-      position: relative;
-      z-index: 2;
-    }
-
-    .banner-status-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: var(--radius-full);
-      background: rgba(13, 19, 34, 0.7);
-      border: 1px solid var(--card-accent, var(--cyan));
-      color: var(--card-accent, var(--cyan));
-      letter-spacing: 0.5px;
-      position: relative;
-      z-index: 2;
-    }
-
-    /* CARD MAIN CONTENT */
-    .card-body {
+    /* CABINET BODY */
+    .cabinet-body {
       display: flex;
       flex-direction: column;
       gap: 12px;
       flex: 1;
     }
 
-    .game-title-row {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .game-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 22px;
-      font-weight: 800;
+    .cabinet-title {
+      font-family: var(--font-arcade);
+      font-size: 15px;
+      line-height: 1.5;
       color: #fff;
-      letter-spacing: -0.3px;
+      letter-spacing: 0.5px;
     }
 
-    .game-genre-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--card-accent, var(--cyan));
-      letter-spacing: 0.8px;
+    .cabinet-genre {
+      font-family: var(--font-terminal);
+      font-size: 19px;
+      color: var(--cabinet-border, var(--neon-cyan));
+      letter-spacing: 1.5px;
       text-transform: uppercase;
     }
 
-    .game-desc {
-      color: var(--text-sub);
-      font-size: 14px;
+    .cabinet-desc {
+      color: var(--text-dim);
+      font-size: 13px;
       line-height: 1.6;
       flex: 1;
     }
 
-    .tags-cloud {
+    .cartridge-specs {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-top: 4px;
+      margin-top: 6px;
     }
 
-    .tag-chip {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+    .spec-pill {
+      background: #07030f;
+      border: 1px solid #371d60;
       padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-sub);
+      border-radius: 4px;
+      font-family: var(--font-arcade);
+      font-size: 8px;
+      color: #8c76b8;
     }
 
-    /* CARD ACTION STRIP */
-    .card-footer {
+    /* CABINET COIN-OP FOOTER */
+    .cabinet-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-top: 16px;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 14px;
+      border-top: 2px dashed rgba(255, 255, 255, 0.08);
     }
 
-    .meta-path {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: var(--text-muted);
+    .coin-slot-tag {
+      font-family: var(--font-arcade);
+      font-size: 8px;
+      color: var(--neon-yellow);
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
     }
 
-    .btn-play {
+    .btn-coin-start {
+      background: linear-gradient(180deg, var(--cabinet-border, var(--neon-cyan)), #094770);
+      border: 2px solid #fff;
+      border-radius: 6px;
+      padding: 10px 18px;
+      color: #fff;
+      font-family: var(--font-arcade);
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-decoration: none;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 22px;
-      background: linear-gradient(135deg, var(--card-accent, var(--cyan)), var(--card-accent-dark, var(--blue)));
-      color: #060911;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 800;
-      font-size: 14px;
-      letter-spacing: 0.4px;
-      border-radius: 10px;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 
+        0 4px 0 #000,
+        0 0 14px var(--cabinet-glow, rgba(0, 240, 255, 0.5));
+      text-shadow: 1px 1px 0 #000;
+      transition: all 0.15s;
     }
 
-    .btn-play:hover {
-      filter: brightness(1.2);
-      transform: scale(1.03);
-      box-shadow: 0 6px 20px var(--card-shadow, rgba(56, 189, 248, 0.4));
+    .btn-coin-start:hover {
+      filter: brightness(1.25);
+      transform: translateY(-2px);
+      box-shadow: 
+        0 6px 0 #000,
+        0 0 20px var(--cabinet-glow, rgba(0, 240, 255, 0.8));
     }
 
-    /* HOTKEYS BAR */
-    .hotkeys-bar {
+    .btn-coin-start:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #000;
+    }
+
+    /* RETRO ARCADE INSTRUCTION STRIP */
+    .arcade-help-bar {
+      background: #0a0515;
+      border: 2px solid #2d184d;
+      border-radius: 6px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 16px;
-      padding: 12px 20px;
-      background: rgba(13, 19, 34, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: var(--radius-full);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: var(--text-muted);
+      gap: 18px;
+      font-family: var(--font-arcade);
+      font-size: 9px;
+      color: #7b669f;
+      letter-spacing: 1px;
     }
 
-    .hotkey-hint {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .hotkey-key {
-      padding: 2px 7px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 4px;
-      color: var(--text-sub);
-      font-weight: 700;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+    .arcade-key-pill {
+      background: #170d2c;
+      border: 1px solid var(--neon-yellow);
+      border-radius: 3px;
+      padding: 3px 6px;
+      color: var(--neon-yellow);
+      margin-right: 4px;
     }
 
     /* FOOTER */
     footer {
       text-align: center;
+      font-family: var(--font-terminal);
+      font-size: 20px;
+      color: #634b86;
+      letter-spacing: 1.5px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      color: var(--text-muted);
-      font-size: 13px;
-      padding-top: 12px;
+      gap: 6px;
+      margin-top: 10px;
     }
 
-    .footer-links {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .footer-links a {
-      color: var(--text-sub);
+    footer a {
+      color: var(--neon-cyan);
       text-decoration: none;
-      transition: color 0.15s;
+    }
+    footer a:hover {
+      text-decoration: underline;
     }
 
-    .footer-links a:hover {
-      color: var(--cyan);
-    }
-
-    /* NO RESULTS FOUND */
-    .no-results {
+    /* NO RESULTS */
+    .no-cartridges {
       grid-column: 1 / -1;
       text-align: center;
-      padding: 48px 24px;
-      background: rgba(13, 19, 34, 0.5);
-      border: 1px dashed var(--border-subtle);
-      border-radius: var(--radius-lg);
+      padding: 40px;
+      background: #0e081e;
+      border: 2px dashed var(--neon-pink);
+      border-radius: 8px;
       display: none;
       flex-direction: column;
       align-items: center;
       gap: 12px;
+      font-family: var(--font-arcade);
+      font-size: 11px;
+      color: var(--neon-pink);
     }
   </style>
 </head>
 <body>
 
-  <!-- TOP ACCENT LINE -->
-  <div class="top-glow-line"></div>
+  <!-- RETRO CRT SCANLINE SHADER -->
+  <div class="crt-overlay" id="crtOverlay"></div>
 
-  <div class="container">
+  <div class="arcade-container">
 
-    <!-- TOP NAVIGATION BAR -->
-    <nav class="navbar">
-      <a href="index.html" class="nav-brand">
-        <div class="brand-icon">🎮</div>
-        <div class="brand-title">
-          AGELIUS <span>GAMES</span>
+    <!-- TOP MARQUEE DISPLAY -->
+    <header class="marquee-bar">
+      <a href="index.html" class="brand-marquee">
+        <span class="pixel-logo">🕹️</span>
+        <div class="brand-name">
+          AGELIUS <span>//</span> ARCADE
         </div>
       </a>
 
-      <div class="nav-center">
-        <div class="pulse-badge">
-          <span class="pulse-dot"></span>
-          <span>3 Arcade Experiences Live</span>
-        </div>
+      <!-- COIN-OP CREDITS BLINK -->
+      <div class="coin-status">
+        <span class="blink-text">●</span>
+        <span>INSERT COIN • 1P READY</span>
       </div>
 
-      <div class="nav-actions">
-        <button id="soundMasterBtn" class="icon-btn" title="Toggle UI sound effects">
-          <span id="soundIcon">🔊</span> Audio
+      <!-- MARQUEE BUTTONS -->
+      <div class="marquee-actions">
+        <button id="crtToggleBtn" class="retro-btn" title="Toggle CRT scanline filter">
+          📺 CRT: ON
         </button>
-        <a href="https://github.com/ageliusg/games" target="_blank" rel="noopener noreferrer" class="icon-btn">
-          <span>⌥</span> GitHub
+        <button id="soundToggleBtn" class="retro-btn" title="Toggle 8-bit sound effects">
+          🔊 CHIP AUDIO: ON
+        </button>
+        <a href="https://github.com/ageliusg/games" target="_blank" rel="noopener noreferrer" class="retro-btn">
+          ⌥ GITHUB
         </a>
       </div>
-    </nav>
-
-    <!-- HERO BILLBOARD -->
-    <header class="hero-banner">
-      <div class="hero-badge">
-        <span>⚡</span> Pure Web Engine • Zero External Dependencies
-      </div>
-      <h1 class="hero-title">
-        Step into the <span class="gradient-text">Agelius Arcade</span>
-      </h1>
-      <p class="hero-desc">
-        A curated suite of handcrafted browser games powered by 60 FPS Canvas rendering, procedural Web Audio synthesis, and native ES6 simulation logic. Instant play, no installations.
-      </p>
     </header>
 
-    <!-- METRICS TELEMETRY STRIP -->
-    <section class="metric-strip">
-      <div class="metric-item">
-        <span class="metric-label">Game Catalog</span>
-        <span class="metric-val metric-accent-cyan">3 Playable Titles</span>
+    <!-- ARCADE HIGH SCORE & TELEMETRY STRIP -->
+    <section class="hiscore-strip">
+      <div class="score-block">
+        <span class="score-title">1UP SCORE</span>
+        <span class="score-val cyan">028400</span>
       </div>
-      <div class="metric-item">
-        <span class="metric-label">Rendering Engine</span>
-        <span class="metric-val metric-accent-emerald">60 FPS Native Canvas</span>
+      <div class="score-block">
+        <span class="score-title">HIGH SCORE</span>
+        <span class="score-val pink">999990</span>
       </div>
-      <div class="metric-item">
-        <span class="metric-label">Sound Synthesis</span>
-        <span class="metric-val metric-accent-purple">Web Audio Procedural</span>
+      <div class="score-block">
+        <span class="score-title">CABINETS</span>
+        <span class="score-val yellow">3 SLOTS</span>
       </div>
-      <div class="metric-item">
-        <span class="metric-label">Package Overhead</span>
-        <span class="metric-val metric-accent-amber">0 Dependencies</span>
+      <div class="score-block">
+        <span class="score-title">ENGINE RENDER</span>
+        <span class="score-val">60 FPS CRT</span>
       </div>
-    </section>
-
-    <!-- CONTROLS & FILTER BAR -->
-    <section class="controls-strip">
-      <!-- Search Input -->
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" class="search-input" placeholder="Search by game title, mechanics, or tags..." autocomplete="off">
-        <span class="kbd-shortcut">/</span>
-      </div>
-
-      <!-- Filter Buttons -->
-      <div class="filter-tabs" id="filterTabs">
-        <button class="filter-btn active" data-category="all">All Titles (3)</button>
-        <button class="filter-btn" data-category="simulation">Simulation</button>
-        <button class="filter-btn" data-category="puzzle">Puzzle</button>
-        <button class="filter-btn" data-category="lifesim">Life Sim</button>
+      <div class="score-block">
+        <span class="score-title">CREDITS</span>
+        <span class="score-val yellow">FREE PLAY</span>
       </div>
     </section>
 
-    <!-- GAMES GRID -->
-    <main class="games-grid" id="gamesGrid">
+    <!-- HERO BILLBOARD -->
+    <section class="hero-billboard">
+      <h1 class="hero-glitch-title">Agelius Retro Arcade</h1>
+      <p class="hero-subtitle">>> SELECT GAME CARTRIDGE & HIT START &lt;&lt;</p>
+      <p class="arcade-chassis-info">
+        Handcrafted 80s/90s retrospective arcade portal. Powered by native 60 FPS HTML5 Canvas loops, procedural 8-bit Web Audio chiptune synthesis, and zero external runtime dependencies.
+      </p>
+    </section>
 
-      <!-- TITLE 1: PLAYLOG GRID -->
-      <article class="game-card" 
-               data-game-id="playlog-grid"
-               data-categories="simulation strategy"
-               data-search="playlog grid dooh dispatcher network telemetry routing mini metro screens fiber ssp"
-               style="--card-accent: #38bdf8; --card-accent-dark: #0284c7; --card-shadow: rgba(56, 189, 248, 0.25); --banner-bg: radial-gradient(circle at 100% 50%, rgba(56, 189, 248, 0.15), rgba(13, 19, 34, 0.8));">
+    <!-- CONTROLS TERMINAL (SEARCH + DIP SWITCH FILTERS) -->
+    <section class="controls-terminal">
+      <div class="terminal-search">
+        <span class="terminal-prompt">SYS_QUERY:></span>
+        <input type="text" id="arcadeSearch" class="terminal-input" placeholder="TYPE TITLE OR KEYWORD..." autocomplete="off">
+      </div>
+
+      <div class="filter-switches" id="cartridgeFilters">
+        <button class="retro-switch-btn active" data-cat="all">ALL CARTRIDGES (3)</button>
+        <button class="retro-switch-btn" data-cat="simulation">SIMULATION</button>
+        <button class="retro-switch-btn" data-cat="puzzle">PUZZLE</button>
+        <button class="retro-switch-btn" data-cat="lifesim">LIFE SIM</button>
+      </div>
+    </section>
+
+    <!-- CABINETS GRID -->
+    <main class="cabinets-grid" id="cabinetsGrid">
+
+      <!-- CABINET 1: PLAYLOG GRID -->
+      <article class="arcade-card"
+               data-cat="simulation"
+               data-keywords="playlog grid dooh dispatcher network telemetry routing fiber mini metro ssp"
+               style="--cabinet-border: #00f0ff; --cabinet-glow: rgba(0, 240, 255, 0.45);">
         
-        <div class="card-banner">
-          <div class="banner-badge-box">📡</div>
-          <span class="banner-status-tag">TELEMETRY SIM</span>
-          <div class="banner-graphic-bg">📡</div>
+        <div class="cabinet-marquee">
+          <span class="marquee-slot-badge">SLOT 01 // DISPATCHER</span>
+          <span class="marquee-icon-box">📡</span>
         </div>
 
-        <div class="card-body">
-          <div class="game-title-row">
-            <h2 class="game-title">Playlog Grid: DOOH Dispatcher</h2>
-            <div class="game-genre-tag">Network Routing & Screen Telemetry</div>
-          </div>
-
-          <p class="game-desc">
-            Direct high-throughput programmatic Digital Out-of-Home video packets inspired by <em>Mini Metro</em>. Connect fiber cables from the central Lynx SSP Hub, fulfill screen contract demands, maintain strict uptime SLAs, reboot malfunctioning billboard displays, and select shift upgrades.
+        <div class="cabinet-body">
+          <div class="cabinet-genre">COIN-OP NETWORK TELEMETRY</div>
+          <h2 class="cabinet-title">Playlog Grid: DOOH Dispatcher</h2>
+          <p class="cabinet-desc">
+            Direct high-throughput programmatic Digital Out-of-Home video packets inspired by <em>Mini Metro</em>. Connect fiber cables from the central Lynx SSP Hub, maintain uptime SLAs, reboot glitching nodes, and choose shift upgrades.
           </p>
 
-          <div class="tags-cloud">
-            <span class="tag-chip">Network Sim</span>
-            <span class="tag-chip">SLA Routing</span>
-            <span class="tag-chip">Audio Synth</span>
-            <span class="tag-chip">Dynamic Events</span>
+          <div class="cartridge-specs">
+            <span class="spec-pill">60 FPS LOOP</span>
+            <span class="spec-pill">ROUTING SIM</span>
+            <span class="spec-pill">CHIP AUDIO</span>
+            <span class="spec-pill">TOUCH/MOUSE</span>
           </div>
         </div>
 
-        <div class="card-footer">
-          <span class="meta-path">📁 playlog-grid/</span>
-          <a href="playlog-grid/index.html" class="btn-play">
-            Play Dispatcher <span>→</span>
+        <div class="cabinet-footer">
+          <div class="coin-slot-tag">
+            <span>🪙</span> 1 COIN = 1 PLAY
+          </div>
+          <a href="playlog-grid/index.html" class="btn-coin-start">
+            START 1P [1] <span>▶</span>
           </a>
         </div>
       </article>
 
-      <!-- TITLE 2: OVERDRIVE BLOCK CLEARER -->
-      <article class="game-card" 
-               data-game-id="overdrive"
-               data-categories="puzzle arcade"
-               data-search="overdrive block clearer 8x8 spatial polyomino puzzle screen shake combo line clear"
-               style="--card-accent: #c084fc; --card-accent-dark: #9333ea; --card-shadow: rgba(168, 85, 247, 0.25); --banner-bg: radial-gradient(circle at 100% 50%, rgba(192, 132, 252, 0.15), rgba(13, 19, 34, 0.8));">
+      <!-- CABINET 2: OVERDRIVE BLOCK CLEARER -->
+      <article class="arcade-card"
+               data-cat="puzzle"
+               data-keywords="overdrive block clearer 8x8 spatial polyomino puzzle screen shake juice combo"
+               style="--cabinet-border: #ff007f; --cabinet-glow: rgba(255, 0, 127, 0.45);">
         
-        <div class="card-banner">
-          <div class="banner-badge-box">🧩</div>
-          <span class="banner-status-tag" style="border-color: #c084fc; color: #c084fc;">SPATIAL PUZZLE</span>
-          <div class="banner-graphic-bg">🧩</div>
+        <div class="cabinet-marquee">
+          <span class="marquee-slot-badge" style="color: #ff007f; text-shadow: 0 0 8px #ff007f;">SLOT 02 // OVERDRIVE</span>
+          <span class="marquee-icon-box" style="text-shadow: 0 0 12px #ff007f;">🧩</span>
         </div>
 
-        <div class="card-body">
-          <div class="game-title-row">
-            <h2 class="game-title">Overdrive: Block Clearer</h2>
-            <div class="game-genre-tag" style="color: #c084fc;">Kinetic 8x8 Spatial Puzzle Clearer</div>
-          </div>
-
-          <p class="game-desc">
-            A fast-paced spatial polyomino block puzzle. Position shapes onto an 8×8 grid to trigger dual-axis simultaneous line cleans. Features tactile screen shake physics, procedural particle bursts, dynamic multiplier combos, and harmonic synthesizer chords.
+        <div class="cabinet-body">
+          <div class="cabinet-genre" style="color: #ff007f;">COIN-OP 8x8 SPATIAL PUZZLE</div>
+          <h2 class="cabinet-title">Overdrive: Block Clearer</h2>
+          <p class="cabinet-desc">
+            Kinetic polyomino arcade clearer. Drop shapes onto an 8×8 neon matrix to clear dual-axis lines simultaneously. Features arcade screen shake juice, explosion particle bursts, dynamic multiplier streaks, and harmonic synth tones.
           </p>
 
-          <div class="tags-cloud">
-            <span class="tag-chip">8x8 Grid</span>
-            <span class="tag-chip">Screen Shake</span>
-            <span class="tag-chip">Particle Juice</span>
-            <span class="tag-chip">Touch Ready</span>
+          <div class="cartridge-specs">
+            <span class="spec-pill" style="border-color: #70103b;">DUAL-AXIS</span>
+            <span class="spec-pill" style="border-color: #70103b;">SCREEN SHAKE</span>
+            <span class="spec-pill" style="border-color: #70103b;">PARTICLE BLAST</span>
+            <span class="spec-pill" style="border-color: #70103b;">TOUCH READY</span>
           </div>
         </div>
 
-        <div class="card-footer">
-          <span class="meta-path">📁 overdrive/</span>
-          <a href="overdrive/index.html" class="btn-play" style="background: linear-gradient(135deg, #c084fc, #9333ea); color: #fff;">
-            Play Overdrive <span>→</span>
+        <div class="cabinet-footer">
+          <div class="coin-slot-tag">
+            <span>🪙</span> 1 COIN = 1 PLAY
+          </div>
+          <a href="overdrive/index.html" class="btn-coin-start" style="background: linear-gradient(180deg, #ff007f, #800040); box-shadow: 0 4px 0 #000, 0 0 14px rgba(255, 0, 127, 0.6);">
+            START 1P [2] <span>▶</span>
           </a>
         </div>
       </article>
 
-      <!-- TITLE 3: LIFELINES +AGE SIMULATOR -->
-      <article class="game-card" 
-               data-game-id="lifelines"
-               data-categories="lifesim simulation"
-               data-search="lifelines age simulator bitlife text life sim career degrees real estate stocks crypto prison break ribbons dynasty"
-               style="--card-accent: #10b981; --card-accent-dark: #059669; --card-shadow: rgba(16, 185, 129, 0.25); --banner-bg: radial-gradient(circle at 100% 50%, rgba(16, 185, 129, 0.15), rgba(13, 19, 34, 0.8));">
+      <!-- CABINET 3: LIFELINES +AGE SIMULATOR -->
+      <article class="arcade-card"
+               data-cat="lifesim"
+               data-keywords="lifelines age simulator bitlife text life sim career real estate crypto prison break dynasty"
+               style="--cabinet-border: #39ff14; --cabinet-glow: rgba(57, 255, 20, 0.45);">
         
-        <div class="card-banner">
-          <div class="banner-badge-box">🧬</div>
-          <span class="banner-status-tag" style="border-color: #10b981; color: #10b981;">DYNASTY ENGINE</span>
-          <div class="banner-graphic-bg">🧬</div>
+        <div class="cabinet-marquee">
+          <span class="marquee-slot-badge" style="color: #39ff14; text-shadow: 0 0 8px #39ff14;">SLOT 03 // LIFELINES</span>
+          <span class="marquee-icon-box" style="text-shadow: 0 0 12px #39ff14;">🧬</span>
         </div>
 
-        <div class="card-body">
-          <div class="game-title-row">
-            <h2 class="game-title">LifeLines: The +Age Simulator</h2>
-            <div class="game-genre-tag" style="color: #10b981;">Life Simulation & Generational Legacy</div>
-          </div>
-
-          <p class="game-desc">
-            Begin life as an infant with randomized parents, nationality, and vitals. Tap the central <strong>"+ Age"</strong> engine to advance year by year, study for degrees, climb corporate or underworld career tracks, manage real estate, trade crypto, escape high-security prisons via a stealth mini-game, and continue your wealth through multi-generational family dynasties.
+        <div class="cabinet-body">
+          <div class="cabinet-genre" style="color: #39ff14;">COIN-OP LIFE SIM & DYNASTY</div>
+          <h2 class="cabinet-title">LifeLines: The +Age Simulator</h2>
+          <p class="cabinet-desc">
+            Begin as an infant with randomized background and stats. Tap "+ Age" to advance year by year, study for university, climb corporate ladders or mafia ranks, trade crypto, escape prison via a 2D stealth maze mini-game, and build multi-generational dynasties.
           </p>
 
-          <div class="tags-cloud">
-            <span class="tag-chip">+Age Engine</span>
-            <span class="tag-chip">Dynasty Legacy</span>
-            <span class="tag-chip">Stealth Prison Break</span>
-            <span class="tag-chip">Stock Exchange</span>
+          <div class="cartridge-specs">
+            <span class="spec-pill" style="border-color: #17540f;">+AGE ENGINE</span>
+            <span class="spec-pill" style="border-color: #17540f;">PRISON MAZE</span>
+            <span class="spec-pill" style="border-color: #17540f;">DYNASTY RUN</span>
+            <span class="spec-pill" style="border-color: #17540f;">LIFETIME RIBBONS</span>
           </div>
         </div>
 
-        <div class="card-footer">
-          <span class="meta-path">📁 lifelines/</span>
-          <a href="lifelines/index.html" class="btn-play" style="background: linear-gradient(135deg, #10b981, #0284c7); color: #fff;">
-            Play LifeLines <span>→</span>
+        <div class="cabinet-footer">
+          <div class="coin-slot-tag">
+            <span>🪙</span> 1 COIN = 1 PLAY
+          </div>
+          <a href="lifelines/index.html" class="btn-coin-start" style="background: linear-gradient(180deg, #10b981, #064e3b); box-shadow: 0 4px 0 #000, 0 0 14px rgba(16, 185, 129, 0.6);">
+            START 1P [3] <span>▶</span>
           </a>
         </div>
       </article>
 
-      <!-- NO RESULTS PLACEHOLDER -->
-      <div id="noResults" class="no-results">
-        <div style="font-size: 36px;">🔍</div>
-        <div style="font-size: 16px; font-weight: 700; color: #fff;">No matching games found</div>
-        <p style="font-size: 13px; color: var(--text-sub);">Try searching with different keywords or clear the category filters.</p>
-        <button id="resetSearchBtn" class="filter-btn" style="margin-top: 8px;">Reset Search & Filters</button>
+      <!-- NO CARTRIDGES FOUND -->
+      <div id="noCartridges" class="no-cartridges">
+        <div>[!] NO CARTRIDGES MATCHED QUERY</div>
+        <button id="resetCartridgesBtn" class="retro-btn" style="margin-top: 8px;">RESET FILTERS</button>
       </div>
 
     </main>
 
-    <!-- KEYBOARD HOTKEYS STRIP -->
-    <section class="hotkeys-bar">
-      <span class="hotkey-hint"><span class="hotkey-key">1</span> Playlog</span>
-      <span class="hotkey-hint"><span class="hotkey-key">2</span> Overdrive</span>
-      <span class="hotkey-hint"><span class="hotkey-key">3</span> LifeLines</span>
-      <span class="hotkey-hint"><span class="hotkey-key">/</span> Search</span>
-      <span class="hotkey-hint"><span class="hotkey-key">M</span> Toggle Sound</span>
+    <!-- KEYBOARD ARCADE SHORTCUTS -->
+    <section class="arcade-help-bar">
+      <span><span class="arcade-key-pill">[1]</span> PLAYLOG</span>
+      <span><span class="arcade-key-pill">[2]</span> OVERDRIVE</span>
+      <span><span class="arcade-key-pill">[3]</span> LIFELINES</span>
+      <span><span class="arcade-key-pill">[C]</span> TOGGLE CRT</span>
+      <span><span class="arcade-key-pill">[M]</span> TOGGLE AUDIO</span>
+      <span><span class="arcade-key-pill">[/]</span> SEARCH</span>
     </section>
 
-    <!-- FOOTER -->
+    <!-- RETRO FOOTER -->
     <footer>
-      <div class="footer-links">
-        <a href="https://games.ageliusg.tech">games.ageliusg.tech</a>
-        <span>•</span>
-        <a href="https://github.com/ageliusg/games" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
-        <span>•</span>
-        <span>Agelius Games Arcade</span>
-      </div>
-      <div>
-        Crafted with pure HTML5 Canvas, Vanilla ES6 JavaScript, and Web Audio API synthesis.
-      </div>
+      <div>AGELIUS GAMES // COIN-OP RETRO ARCADE SUITE</div>
+      <div>HOSTED AT <a href="https://games.ageliusg.tech">GAMES.AGELIUSG.TECH</a> • OPEN SOURCE ON <a href="https://github.com/ageliusg/games" target="_blank" rel="noopener noreferrer">GITHUB</a></div>
     </footer>
 
   </div>
 
-  <!-- EMBEDDED ZERO-DEPENDENCY SCRIPT FOR HUB INTERACTIONS & AUDIO -->
+  <!-- PROCEDURAL 8-BIT AUDIO & RETRO ARCADE INTERACTIONS -->
   <script>
-    // --- SIMPLE PROCEDURAL AUDIO SYNTHESIZER ---
-    class HubAudio {
+    // --- PROCEDURAL 8-BIT CHIPTUNE SOUND GENERATOR ---
+    class RetroArcadeAudio {
       constructor() {
         this.ctx = null;
-        this.muted = localStorage.getItem('agelius_hub_sound') === 'muted';
+        this.muted = localStorage.getItem('agelius_retro_sound') === 'muted';
       }
 
       init() {
@@ -963,11 +842,12 @@
 
       toggle() {
         this.muted = !this.muted;
-        localStorage.setItem('agelius_hub_sound', this.muted ? 'muted' : 'on');
+        localStorage.setItem('agelius_retro_sound', this.muted ? 'muted' : 'on');
         return !this.muted;
       }
 
-      playHover() {
+      // 8-bit blip on hover
+      playBlip() {
         if (this.muted) return;
         this.init();
         if (!this.ctx) return;
@@ -975,158 +855,213 @@
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
           const now = this.ctx.currentTime;
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(440, now);
-          osc.frequency.exponentialRampToValueAtTime(880, now + 0.04);
-          gain.gain.setValueAtTime(0.02, now);
+
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(600, now);
+          osc.frequency.setValueAtTime(900, now + 0.02);
+
+          gain.gain.setValueAtTime(0.04, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+
           osc.connect(gain);
           gain.connect(this.ctx.destination);
+
           osc.start(now);
           osc.stop(now + 0.04);
         } catch(e) {}
       }
 
-      playClick() {
+      // Authentic retro Coin Insert "Ch-Ching!"
+      playCoin() {
         if (this.muted) return;
         this.init();
         if (!this.ctx) return;
         try {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
           const now = this.ctx.currentTime;
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(587.33, now); // D5
-          osc.frequency.exponentialRampToValueAtTime(1174.66, now + 0.08); // D6
-          gain.gain.setValueAtTime(0.05, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(now);
-          osc.stop(now + 0.08);
+          [987.77, 1318.51].forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            const t = now + idx * 0.07;
+
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(freq, t);
+
+            gain.gain.setValueAtTime(0.07, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            osc.start(t);
+            osc.stop(t + 0.28);
+          });
+        } catch(e) {}
+      }
+
+      // 8-bit Start Fanfare
+      playStart() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const notes = [523.25, 659.25, 783.99, 1046.50];
+          const now = this.ctx.currentTime;
+          notes.forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            const t = now + idx * 0.06;
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, t);
+
+            gain.gain.setValueAtTime(0.09, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            osc.start(t);
+            osc.stop(t + 0.2);
+          });
         } catch(e) {}
       }
     }
 
-    const hubAudio = new HubAudio();
+    const retroAudio = new RetroArcadeAudio();
 
-    // DOM Elements
-    const searchInput = document.getElementById('searchInput');
-    const filterTabs = document.getElementById('filterTabs');
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const gameCards = document.querySelectorAll('.game-card');
-    const noResults = document.getElementById('noResults');
-    const resetSearchBtn = document.getElementById('resetSearchBtn');
-    const soundMasterBtn = document.getElementById('soundMasterBtn');
-    const soundIcon = document.getElementById('soundIcon');
+    // DOM Controls
+    const crtOverlay = document.getElementById('crtOverlay');
+    const crtToggleBtn = document.getElementById('crtToggleBtn');
+    const soundToggleBtn = document.getElementById('soundToggleBtn');
+    const arcadeSearch = document.getElementById('arcadeSearch');
+    const filterSwitches = document.querySelectorAll('.retro-switch-btn');
+    const arcadeCards = document.querySelectorAll('.arcade-card');
+    const noCartridges = document.getElementById('noCartridges');
+    const resetCartridgesBtn = document.getElementById('resetCartridgesBtn');
 
-    // Update sound button UI
-    function updateSoundUI() {
-      if (hubAudio.muted) {
-        soundIcon.textContent = '🔇';
-        soundMasterBtn.classList.add('muted');
+    // CRT Toggle State
+    let crtEnabled = localStorage.getItem('agelius_crt_fx') !== 'off';
+    function updateCRTUI() {
+      if (crtEnabled) {
+        document.body.classList.remove('no-crt');
+        crtToggleBtn.textContent = '📺 CRT: ON';
       } else {
-        soundIcon.textContent = '🔊';
-        soundMasterBtn.classList.remove('muted');
+        document.body.classList.add('no-crt');
+        crtToggleBtn.textContent = '📺 CRT: OFF';
+      }
+    }
+    updateCRTUI();
+
+    crtToggleBtn.addEventListener('click', () => {
+      crtEnabled = !crtEnabled;
+      localStorage.setItem('agelius_crt_fx', crtEnabled ? 'on' : 'off');
+      updateCRTUI();
+      retroAudio.playBlip();
+    });
+
+    // Sound Toggle State
+    function updateSoundUI() {
+      if (retroAudio.muted) {
+        soundToggleBtn.textContent = '🔇 CHIP AUDIO: OFF';
+      } else {
+        soundToggleBtn.textContent = '🔊 CHIP AUDIO: ON';
       }
     }
     updateSoundUI();
 
-    soundMasterBtn.addEventListener('click', () => {
-      const active = hubAudio.toggle();
+    soundToggleBtn.addEventListener('click', () => {
+      const active = retroAudio.toggle();
       updateSoundUI();
-      if (active) hubAudio.playClick();
+      if (active) retroAudio.playCoin();
     });
 
-    // Sound effects on interactive elements
-    document.querySelectorAll('.filter-btn, .btn-play, .icon-btn').forEach(el => {
-      el.addEventListener('mouseenter', () => hubAudio.playHover());
-      el.addEventListener('click', () => hubAudio.playClick());
+    // Sound triggers
+    document.querySelectorAll('.retro-btn, .retro-switch-btn').forEach(btn => {
+      btn.addEventListener('mouseenter', () => retroAudio.playBlip());
     });
 
-    // Filtering & Searching Logic
+    document.querySelectorAll('.btn-coin-start').forEach(btn => {
+      btn.addEventListener('mouseenter', () => retroAudio.playBlip());
+      btn.addEventListener('click', (e) => {
+        retroAudio.playCoin();
+      });
+    });
+
+    // Filter & Search Logic
     let currentCategory = 'all';
 
-    function applyFilterAndSearch() {
-      const query = (searchInput.value || '').trim().toLowerCase();
-      let matchCount = 0;
+    function filterCartridges() {
+      const q = (arcadeSearch.value || '').trim().toLowerCase();
+      let matches = 0;
 
-      gameCards.forEach(card => {
-        const categories = (card.dataset.categories || '').toLowerCase();
-        const searchMeta = (card.dataset.search || '').toLowerCase();
-        const title = card.querySelector('.game-title').textContent.toLowerCase();
-        const desc = card.querySelector('.game-desc').textContent.toLowerCase();
+      arcadeCards.forEach(card => {
+        const cat = (card.dataset.cat || '').toLowerCase();
+        const kw = (card.dataset.keywords || '').toLowerCase();
+        const title = card.querySelector('.cabinet-title').textContent.toLowerCase();
 
-        const categoryMatches = (currentCategory === 'all') || categories.includes(currentCategory);
-        const searchMatches = !query || title.includes(query) || desc.includes(query) || searchMeta.includes(query);
+        const catMatches = (currentCategory === 'all') || cat.includes(currentCategory);
+        const searchMatches = !q || title.includes(q) || kw.includes(q);
 
-        if (categoryMatches && searchMatches) {
+        if (catMatches && searchMatches) {
           card.style.display = 'flex';
-          matchCount++;
+          matches++;
         } else {
           card.style.display = 'none';
         }
       });
 
-      if (matchCount === 0) {
-        noResults.style.display = 'flex';
-      } else {
-        noResults.style.display = 'none';
-      }
+      noCartridges.style.display = matches === 0 ? 'flex' : 'none';
     }
 
-    // Filter Buttons Click
-    filterBtns.forEach(btn => {
+    filterSwitches.forEach(btn => {
       btn.addEventListener('click', () => {
-        filterBtns.forEach(b => b.classList.remove('active'));
+        filterSwitches.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        currentCategory = btn.dataset.category || 'all';
-        applyFilterAndSearch();
+        currentCategory = btn.dataset.cat || 'all';
+        retroAudio.playBlip();
+        filterCartridges();
       });
     });
 
-    // Search Input
-    searchInput.addEventListener('input', () => {
-      applyFilterAndSearch();
+    arcadeSearch.addEventListener('input', () => {
+      filterCartridges();
     });
 
-    // Reset Search
-    if (resetSearchBtn) {
-      resetSearchBtn.addEventListener('click', () => {
-        searchInput.value = '';
+    if (resetCartridgesBtn) {
+      resetCartridgesBtn.addEventListener('click', () => {
+        arcadeSearch.value = '';
         currentCategory = 'all';
-        filterBtns.forEach(b => b.classList.toggle('active', b.dataset.category === 'all'));
-        applyFilterAndSearch();
-        hubAudio.playClick();
+        filterSwitches.forEach(b => b.classList.toggle('active', b.dataset.cat === 'all'));
+        retroAudio.playBlip();
+        filterCartridges();
       });
     }
 
     // Keyboard Hotkeys
     window.addEventListener('keydown', (e) => {
-      // If typing in search box, allow normal typing unless Escape or Enter
-      if (document.activeElement === searchInput) {
-        if (e.key === 'Escape') {
-          searchInput.blur();
-        }
+      if (document.activeElement === arcadeSearch) {
+        if (e.key === 'Escape') arcadeSearch.blur();
         return;
       }
 
-      if (e.key === '/') {
-        e.preventDefault();
-        searchInput.focus();
-        searchInput.select();
-        hubAudio.playClick();
-      } else if (e.key === 'm' || e.key === 'M') {
-        soundMasterBtn.click();
-      } else if (e.key === '1') {
-        hubAudio.playClick();
+      if (e.key === '1') {
+        retroAudio.playCoin();
         window.location.href = 'playlog-grid/index.html';
       } else if (e.key === '2') {
-        hubAudio.playClick();
+        retroAudio.playCoin();
         window.location.href = 'overdrive/index.html';
       } else if (e.key === '3') {
-        hubAudio.playClick();
+        retroAudio.playCoin();
         window.location.href = 'lifelines/index.html';
+      } else if (e.key === 'c' || e.key === 'C') {
+        crtToggleBtn.click();
+      } else if (e.key === 'm' || e.key === 'M') {
+        soundToggleBtn.click();
+      } else if (e.key === '/') {
+        e.preventDefault();
+        arcadeSearch.focus();
+        arcadeSearch.select();
+        retroAudio.playBlip();
       }
     });
   </script>
