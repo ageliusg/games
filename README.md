@@ -1,6 +1,8 @@
 # Agelius Games Hub
 
-A unified arcade portal and collection of zero-dependency browser games crafted with pure HTML5 Canvas, Vanilla ES6 JavaScript, and Web Audio API synthesis.
+A unified arcade portal and collection of zero-dependency browser games crafted with pure HTML5 Canvas, Vanilla ES6 JavaScript, and Web Audio API synthesis by Agelius.
+
+🌐 **Live Arcade:** [https://games.ageliusg.tech](https://games.ageliusg.tech)
 
 ---
 

@@ -3,27 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Antigravity Arcade Hub</title>
+  <title>Agelius Games Hub | Next-Gen Web Arcade</title>
+  <meta name="description" content="A curated collection of zero-dependency browser games crafted with pure HTML5 Canvas, Vanilla ES6 JavaScript, and Web Audio API synthesis by Agelius.">
+  
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg-space: #070a13;
-      --bg-card: rgba(14, 20, 36, 0.75);
-      --border-card: rgba(56, 139, 253, 0.2);
-      --border-glow: rgba(56, 139, 253, 0.5);
-      --primary-cyan: #38bdf8;
-      --primary-blue: #3b82f6;
-      --primary-emerald: #10b981;
-      --primary-amber: #f59e0b;
-      --primary-purple: #a855f7;
-      --text-main: #f1f5f9;
+      --bg-space: #060911;
+      --bg-surface: rgba(13, 19, 34, 0.75);
+      --bg-card: rgba(16, 24, 44, 0.65);
+      --bg-card-hover: rgba(22, 33, 60, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(56, 189, 248, 0.4);
+      
+      --cyan: #38bdf8;
+      --blue: #3b82f6;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --purple: #a855f7;
+      --magenta: #ec4899;
+
+      --text-main: #f8fafc;
       --text-sub: #94a3b8;
       --text-muted: #64748b;
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --radius-full: 9999px;
     }
 
     * {
@@ -35,154 +49,415 @@
     body {
       background-color: var(--bg-space);
       background-image: 
-        radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.12) 0%, transparent 60%),
-        radial-gradient(circle at 90% 90%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 15% 70%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
         linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+      background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px;
       color: var(--text-main);
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 48px 24px 64px;
+      overflow-x: hidden;
+      position: relative;
     }
 
+    /* TOP AMBIENT GLOW LINE */
+    .top-glow-line {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #38bdf8 25%, #a855f7 50%, #ec4899 75%, transparent);
+      z-index: 100;
+    }
+
+    /* GLOBAL CONTAINER */
     .container {
       width: 100%;
-      max-width: 1080px;
+      max-width: 1180px;
+      padding: 24px 24px 64px;
       display: flex;
       flex-direction: column;
       gap: 36px;
     }
 
-    /* HEADER */
-    header {
-      text-align: center;
+    /* TOP NAVIGATION BAR */
+    .navbar {
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 22px;
+      background: rgba(13, 19, 34, 0.7);
+      backdrop-filter: blur(18px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .nav-brand {
+      display: flex;
       align-items: center;
       gap: 12px;
+      text-decoration: none;
+      color: #fff;
     }
 
-    .pill-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 16px;
-      border-radius: 999px;
-      background: rgba(56, 189, 248, 0.1);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      color: var(--primary-cyan);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    .pill-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--primary-cyan);
-      box-shadow: 0 0 10px var(--primary-cyan);
-      animation: pulse 2s infinite ease-in-out;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.4; transform: scale(0.9); }
-      50% { opacity: 1; transform: scale(1.15); }
-    }
-
-    h1 {
-      font-size: 42px;
-      font-weight: 800;
-      letter-spacing: -1px;
-      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .subtitle {
-      color: var(--text-sub);
-      font-size: 16px;
-      max-width: 600px;
-      line-height: 1.6;
-    }
-
-    /* STATS SUMMARY BAR */
-    .summary-strip {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      padding: 16px 24px;
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      border-radius: 16px;
-      backdrop-filter: blur(12px);
-    }
-
-    .summary-item {
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0284c7, #a855f7);
       display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .summary-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 1px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-    }
-
-    .summary-val {
+      align-items: center;
+      justify-content: center;
       font-size: 18px;
-      font-weight: 700;
-      color: var(--text-main);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+    }
+
+    .brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
+    .brand-title span {
+      background: linear-gradient(135deg, #38bdf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pulse-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px;
+      border-radius: var(--radius-full);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--emerald);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 8px var(--emerald);
+      animation: pulseAnim 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      padding: 8px 14px;
+      color: var(--text-sub);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .icon-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* HERO SECTION */
+    .hero-banner {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 24px 16px 12px;
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: var(--radius-full);
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: var(--cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 54px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      max-width: 820px;
+    }
+
+    .hero-title .gradient-text {
+      background: linear-gradient(135deg, #ffffff 20%, #38bdf8 65%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 10px 30px rgba(56, 189, 248, 0.2);
+    }
+
+    .hero-desc {
+      color: var(--text-sub);
+      font-size: 17px;
+      max-width: 680px;
+      line-height: 1.6;
+    }
+
+    /* TELEMETRY METRIC STRIP */
+    .metric-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      background: rgba(13, 19, 34, 0.5);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 16px 20px;
+      backdrop-filter: blur(12px);
+    }
+
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 4px 8px;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .metric-item:last-child {
+      border-right: none;
+    }
+
+    .metric-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .metric-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .metric-accent-cyan { color: var(--cyan); }
+    .metric-accent-emerald { color: var(--emerald); }
+    .metric-accent-purple { color: var(--purple); }
+    .metric-accent-amber { color: var(--amber); }
+
+    /* CONTROLS STRIP: SEARCH & FILTERS */
+    .controls-strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 280px;
+      max-width: 420px;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      font-size: 15px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(13, 19, 34, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      padding: 11px 40px 11px 40px;
+      font-family: var(--font-main);
+      font-size: 14px;
+      color: #fff;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+      background: rgba(16, 24, 44, 0.95);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .kbd-shortcut {
+      position: absolute;
+      right: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 2px 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      color: var(--text-muted);
+    }
+
+    .filter-tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .filter-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-sub);
+      border-radius: var(--radius-full);
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .filter-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .filter-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--cyan);
+      color: var(--cyan);
+      font-weight: 700;
+    }
+
     /* GAME GRID */
     .games-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 24px;
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 1024px) {
       .games-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
       }
-      h1 {
-        font-size: 32px;
+      .metric-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .metric-item:nth-child(2) {
+        border-right: none;
       }
     }
 
-    /* GAME CARD */
+    @media (max-width: 680px) {
+      .games-grid {
+        grid-template-columns: 1fr;
+      }
+      .metric-strip {
+        grid-template-columns: 1fr;
+      }
+      .metric-item {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        padding-bottom: 8px;
+      }
+      .metric-item:last-child {
+        border-bottom: none;
+      }
+      .hero-title {
+        font-size: 38px;
+      }
+      .navbar {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+
+    /* GAME ARCADE CARD */
     .game-card {
       background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      border-radius: 20px;
-      padding: 28px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       gap: 20px;
       position: relative;
       overflow: hidden;
-      backdrop-filter: blur(16px);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(20px);
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .game-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--border-glow);
-      box-shadow: 0 20px 40px -15px rgba(56, 189, 248, 0.2);
+      background: var(--bg-card-hover);
+      transform: translateY(-5px);
+      border-color: var(--card-border-glow, var(--border-glow));
+      box-shadow: 0 24px 48px -15px var(--card-shadow, rgba(56, 189, 248, 0.25));
     }
 
     .game-card::before {
@@ -191,73 +466,129 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, transparent, var(--accent-color, var(--primary-cyan)), transparent);
-      opacity: 0.8;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--card-accent, var(--cyan)), transparent);
+      opacity: 0.9;
     }
 
-    .card-top {
+    /* CARD BANNER / VISUAL HEADER */
+    .card-banner {
+      width: 100%;
+      height: 110px;
+      border-radius: var(--radius-md);
+      background: var(--banner-bg, rgba(255, 255, 255, 0.03));
+      border: 1px solid rgba(255, 255, 255, 0.06);
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
+      padding: 16px 20px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .game-badge {
-      font-size: 32px;
+    .banner-graphic-bg {
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      font-size: 110px;
+      opacity: 0.12;
+      user-select: none;
+      pointer-events: none;
+      filter: blur(2px);
+      transition: transform 0.4s ease;
+    }
+
+    .game-card:hover .banner-graphic-bg {
+      transform: scale(1.1) rotate(6deg);
+      opacity: 0.2;
+    }
+
+    .banner-badge-box {
       width: 58px;
       height: 58px;
       border-radius: 14px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(13, 19, 34, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
+      font-size: 30px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+      position: relative;
+      z-index: 2;
     }
 
-    .card-heading {
+    .banner-status-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      background: rgba(13, 19, 34, 0.7);
+      border: 1px solid var(--card-accent, var(--cyan));
+      color: var(--card-accent, var(--cyan));
+      letter-spacing: 0.5px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* CARD MAIN CONTENT */
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
       flex: 1;
     }
 
-    .game-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 6px;
+    .game-title-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
-    .game-genre {
+    .game-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+
+    .game-genre-tag {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: var(--accent-color, var(--primary-cyan));
-      letter-spacing: 0.5px;
-      font-weight: 600;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--card-accent, var(--cyan));
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
     }
 
     .game-desc {
       color: var(--text-sub);
       font-size: 14px;
       line-height: 1.6;
+      flex: 1;
     }
 
-    .tags-row {
+    .tags-cloud {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
+      margin-top: 4px;
     }
 
-    .tag {
-      background: rgba(255, 255, 255, 0.05);
+    .tag-chip {
+      background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 4px 10px;
+      padding: 3px 8px;
       border-radius: 6px;
       font-size: 11px;
       font-family: 'JetBrains Mono', monospace;
       color: var(--text-sub);
     }
 
-    .card-actions {
+    /* CARD ACTION STRIP */
+    .card-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -265,177 +596,540 @@
       border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
 
-    .btn-launch {
+    .meta-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-play {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 12px 24px;
-      background: linear-gradient(135deg, var(--accent-color, var(--primary-cyan)), var(--accent-glow, var(--primary-blue)));
-      color: #070a13;
-      font-weight: 700;
+      padding: 10px 22px;
+      background: linear-gradient(135deg, var(--card-accent, var(--cyan)), var(--card-accent-dark, var(--blue)));
+      color: #060911;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
       font-size: 14px;
+      letter-spacing: 0.4px;
       border-radius: 10px;
       text-decoration: none;
       transition: all 0.2s ease;
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
     }
 
-    .btn-launch:hover {
-      filter: brightness(1.15);
-      transform: scale(1.02);
-      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+    .btn-play:hover {
+      filter: brightness(1.2);
+      transform: scale(1.03);
+      box-shadow: 0 6px 20px var(--card-shadow, rgba(56, 189, 248, 0.4));
     }
 
-    .folder-path {
+    /* HOTKEYS BAR */
+    .hotkeys-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 12px 20px;
+      background: rgba(13, 19, 34, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-full);
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
       color: var(--text-muted);
     }
 
+    .hotkey-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hotkey-key {
+      padding: 2px 7px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      color: var(--text-sub);
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
     /* FOOTER */
     footer {
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
       color: var(--text-muted);
       font-size: 13px;
-      font-family: 'JetBrains Mono', monospace;
-      margin-top: 12px;
+      padding-top: 12px;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .footer-links a {
+      color: var(--text-sub);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .footer-links a:hover {
+      color: var(--cyan);
+    }
+
+    /* NO RESULTS FOUND */
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 48px 24px;
+      background: rgba(13, 19, 34, 0.5);
+      border: 1px dashed var(--border-subtle);
+      border-radius: var(--radius-lg);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
     }
   </style>
 </head>
 <body>
 
+  <!-- TOP ACCENT LINE -->
+  <div class="top-glow-line"></div>
+
   <div class="container">
-    <!-- HEADER -->
-    <header>
-      <div class="pill-badge">
-        <span class="pill-dot"></span>
-        Zero-Dependency Canvas Engine
+
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="navbar">
+      <a href="index.html" class="nav-brand">
+        <div class="brand-icon">🎮</div>
+        <div class="brand-title">
+          AGELIUS <span>GAMES</span>
+        </div>
+      </a>
+
+      <div class="nav-center">
+        <div class="pulse-badge">
+          <span class="pulse-dot"></span>
+          <span>3 Arcade Experiences Live</span>
+        </div>
       </div>
-      <h1>Antigravity Games Hub</h1>
-      <p class="subtitle">
-        A unified arcade launcher for browser games built with pure HTML5 Canvas, native ES6 JavaScript, and Web Audio API synthesis.
+
+      <div class="nav-actions">
+        <button id="soundMasterBtn" class="icon-btn" title="Toggle UI sound effects">
+          <span id="soundIcon">🔊</span> Audio
+        </button>
+        <a href="https://github.com/ageliusg/games" target="_blank" rel="noopener noreferrer" class="icon-btn">
+          <span>⌥</span> GitHub
+        </a>
+      </div>
+    </nav>
+
+    <!-- HERO BILLBOARD -->
+    <header class="hero-banner">
+      <div class="hero-badge">
+        <span>⚡</span> Pure Web Engine • Zero External Dependencies
+      </div>
+      <h1 class="hero-title">
+        Step into the <span class="gradient-text">Agelius Arcade</span>
+      </h1>
+      <p class="hero-desc">
+        A curated suite of handcrafted browser games powered by 60 FPS Canvas rendering, procedural Web Audio synthesis, and native ES6 simulation logic. Instant play, no installations.
       </p>
     </header>
 
-    <!-- STATUS STRIP -->
-    <div class="summary-strip">
-      <div class="summary-item">
-        <span class="summary-label">Catalog</span>
-        <span class="summary-val">3 Playable Titles</span>
+    <!-- METRICS TELEMETRY STRIP -->
+    <section class="metric-strip">
+      <div class="metric-item">
+        <span class="metric-label">Game Catalog</span>
+        <span class="metric-val metric-accent-cyan">3 Playable Titles</span>
       </div>
-      <div class="summary-item">
-        <span class="summary-label">Audio Tech</span>
-        <span class="summary-val">Procedural Synth</span>
+      <div class="metric-item">
+        <span class="metric-label">Rendering Engine</span>
+        <span class="metric-val metric-accent-emerald">60 FPS Native Canvas</span>
       </div>
-      <div class="summary-item">
-        <span class="summary-label">Rendering</span>
-        <span class="summary-val">60 FPS Native Canvas</span>
+      <div class="metric-item">
+        <span class="metric-label">Sound Synthesis</span>
+        <span class="metric-val metric-accent-purple">Web Audio Procedural</span>
       </div>
-      <div class="summary-item">
-        <span class="summary-label">Dependencies</span>
-        <span class="summary-val">0 External Packages</span>
+      <div class="metric-item">
+        <span class="metric-label">Package Overhead</span>
+        <span class="metric-val metric-accent-amber">0 Dependencies</span>
       </div>
-    </div>
+    </section>
+
+    <!-- CONTROLS & FILTER BAR -->
+    <section class="controls-strip">
+      <!-- Search Input -->
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by game title, mechanics, or tags..." autocomplete="off">
+        <span class="kbd-shortcut">/</span>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-btn active" data-category="all">All Titles (3)</button>
+        <button class="filter-btn" data-category="simulation">Simulation</button>
+        <button class="filter-btn" data-category="puzzle">Puzzle</button>
+        <button class="filter-btn" data-category="lifesim">Life Sim</button>
+      </div>
+    </section>
 
     <!-- GAMES GRID -->
-    <main class="games-grid">
+    <main class="games-grid" id="gamesGrid">
 
-      <!-- GAME 1: PLAYLOG GRID -->
-      <article class="game-card" style="--accent-color: #38bdf8; --accent-glow: #0284c7;">
-        <div class="card-top">
-          <div class="game-badge">📡</div>
-          <div class="card-heading">
+      <!-- TITLE 1: PLAYLOG GRID -->
+      <article class="game-card" 
+               data-game-id="playlog-grid"
+               data-categories="simulation strategy"
+               data-search="playlog grid dooh dispatcher network telemetry routing mini metro screens fiber ssp"
+               style="--card-accent: #38bdf8; --card-accent-dark: #0284c7; --card-shadow: rgba(56, 189, 248, 0.25); --banner-bg: radial-gradient(circle at 100% 50%, rgba(56, 189, 248, 0.15), rgba(13, 19, 34, 0.8));">
+        
+        <div class="card-banner">
+          <div class="banner-badge-box">📡</div>
+          <span class="banner-status-tag">TELEMETRY SIM</span>
+          <div class="banner-graphic-bg">📡</div>
+        </div>
+
+        <div class="card-body">
+          <div class="game-title-row">
             <h2 class="game-title">Playlog Grid: DOOH Dispatcher</h2>
-            <div class="game-genre">NETWORK TELEMETRY & ROUTING SIMULATION</div>
+            <div class="game-genre-tag">Network Routing & Screen Telemetry</div>
+          </div>
+
+          <p class="game-desc">
+            Direct high-throughput programmatic Digital Out-of-Home video packets inspired by <em>Mini Metro</em>. Connect fiber cables from the central Lynx SSP Hub, fulfill screen contract demands, maintain strict uptime SLAs, reboot malfunctioning billboard displays, and select shift upgrades.
+          </p>
+
+          <div class="tags-cloud">
+            <span class="tag-chip">Network Sim</span>
+            <span class="tag-chip">SLA Routing</span>
+            <span class="tag-chip">Audio Synth</span>
+            <span class="tag-chip">Dynamic Events</span>
           </div>
         </div>
 
-        <p class="game-desc">
-          Manage a high-throughput programmatic Digital Out-of-Home network inspired by <em>Mini Metro</em>. Connect fiber cables from the central Lynx SSP Hub to billboard screens, route video packets, manage uptime SLAs, reboot glitching nodes, and pick shift upgrades.
-        </p>
-
-        <div class="tags-row">
-          <span class="tag">Simulation</span>
-          <span class="tag">Strategy</span>
-          <span class="tag">Dynamic Events</span>
-          <span class="tag">Audio Synthesis</span>
-        </div>
-
-        <div class="card-actions">
-          <span class="folder-path">📁 playlog-grid/</span>
-          <a href="playlog-grid/index.html" class="btn-launch">
-            Launch Game <span>→</span>
+        <div class="card-footer">
+          <span class="meta-path">📁 playlog-grid/</span>
+          <a href="playlog-grid/index.html" class="btn-play">
+            Play Dispatcher <span>→</span>
           </a>
         </div>
       </article>
 
-      <!-- GAME 2: OVERDRIVE BLOCK CLEARER -->
-      <article class="game-card" style="--accent-color: #a855f7; --accent-glow: #ec4899;">
-        <div class="card-top">
-          <div class="game-badge">🧩</div>
-          <div class="card-heading">
+      <!-- TITLE 2: OVERDRIVE BLOCK CLEARER -->
+      <article class="game-card" 
+               data-game-id="overdrive"
+               data-categories="puzzle arcade"
+               data-search="overdrive block clearer 8x8 spatial polyomino puzzle screen shake combo line clear"
+               style="--card-accent: #c084fc; --card-accent-dark: #9333ea; --card-shadow: rgba(168, 85, 247, 0.25); --banner-bg: radial-gradient(circle at 100% 50%, rgba(192, 132, 252, 0.15), rgba(13, 19, 34, 0.8));">
+        
+        <div class="card-banner">
+          <div class="banner-badge-box">🧩</div>
+          <span class="banner-status-tag" style="border-color: #c084fc; color: #c084fc;">SPATIAL PUZZLE</span>
+          <div class="banner-graphic-bg">🧩</div>
+        </div>
+
+        <div class="card-body">
+          <div class="game-title-row">
             <h2 class="game-title">Overdrive: Block Clearer</h2>
-            <div class="game-genre">KINETIC 8x8 SPATIAL PUZZLE CLEARER</div>
+            <div class="game-genre-tag" style="color: #c084fc;">Kinetic 8x8 Spatial Puzzle Clearer</div>
+          </div>
+
+          <p class="game-desc">
+            A fast-paced spatial polyomino block puzzle. Position shapes onto an 8×8 grid to trigger dual-axis simultaneous line cleans. Features tactile screen shake physics, procedural particle bursts, dynamic multiplier combos, and harmonic synthesizer chords.
+          </p>
+
+          <div class="tags-cloud">
+            <span class="tag-chip">8x8 Grid</span>
+            <span class="tag-chip">Screen Shake</span>
+            <span class="tag-chip">Particle Juice</span>
+            <span class="tag-chip">Touch Ready</span>
           </div>
         </div>
 
-        <p class="game-desc">
-          A minimalist spatial polyomino block puzzle. Drag pieces onto an 8x8 board to trigger dual-axis simultaneous line sweeps. Features satisfying screen shake, procedural explosion particle blasts, dynamic combo multipliers, and harmonic chord tones.
-        </p>
-
-        <div class="tags-row">
-          <span class="tag">Spatial Puzzle</span>
-          <span class="tag">Arcade Juice</span>
-          <span class="tag">Screen Shake</span>
-          <span class="tag">Touch Support</span>
-        </div>
-
-        <div class="card-actions">
-          <span class="folder-path">📁 overdrive/</span>
-          <a href="overdrive/index.html" class="btn-launch" style="background: linear-gradient(135deg, #a855f7, #ec4899); color: #fff;">
-            Launch Game <span>→</span>
+        <div class="card-footer">
+          <span class="meta-path">📁 overdrive/</span>
+          <a href="overdrive/index.html" class="btn-play" style="background: linear-gradient(135deg, #c084fc, #9333ea); color: #fff;">
+            Play Overdrive <span>→</span>
           </a>
         </div>
       </article>
 
-      <!-- GAME 3: LIFELINES +AGE SIMULATOR -->
-      <article class="game-card" style="--accent-color: #10b981; --accent-glow: #059669;">
-        <div class="card-top">
-          <div class="game-badge">🧬</div>
-          <div class="card-heading">
+      <!-- TITLE 3: LIFELINES +AGE SIMULATOR -->
+      <article class="game-card" 
+               data-game-id="lifelines"
+               data-categories="lifesim simulation"
+               data-search="lifelines age simulator bitlife text life sim career degrees real estate stocks crypto prison break ribbons dynasty"
+               style="--card-accent: #10b981; --card-accent-dark: #059669; --card-shadow: rgba(16, 185, 129, 0.25); --banner-bg: radial-gradient(circle at 100% 50%, rgba(16, 185, 129, 0.15), rgba(13, 19, 34, 0.8));">
+        
+        <div class="card-banner">
+          <div class="banner-badge-box">🧬</div>
+          <span class="banner-status-tag" style="border-color: #10b981; color: #10b981;">DYNASTY ENGINE</span>
+          <div class="banner-graphic-bg">🧬</div>
+        </div>
+
+        <div class="card-body">
+          <div class="game-title-row">
             <h2 class="game-title">LifeLines: The +Age Simulator</h2>
-            <div class="game-genre">TEXT LIFE SIMULATOR & GENERATIONAL DYNASTY</div>
+            <div class="game-genre-tag" style="color: #10b981;">Life Simulation & Generational Legacy</div>
+          </div>
+
+          <p class="game-desc">
+            Begin life as an infant with randomized parents, nationality, and vitals. Tap the central <strong>"+ Age"</strong> engine to advance year by year, study for degrees, climb corporate or underworld career tracks, manage real estate, trade crypto, escape high-security prisons via a stealth mini-game, and continue your wealth through multi-generational family dynasties.
+          </p>
+
+          <div class="tags-cloud">
+            <span class="tag-chip">+Age Engine</span>
+            <span class="tag-chip">Dynasty Legacy</span>
+            <span class="tag-chip">Stealth Prison Break</span>
+            <span class="tag-chip">Stock Exchange</span>
           </div>
         </div>
 
-        <p class="game-desc">
-          Begin life as an infant with randomized parents, nationality, and vitals. Tap the central <strong>"+ Age"</strong> engine to advance year by year, navigate moral dilemmas, pursue degrees, climb corporate or underworld career tracks, manage real estate, trade crypto, escape high-security prisons via a stealth mini-game, earn lifetime ribbons, and pass your fortune down through multi-generational family dynasties.
-        </p>
-
-        <div class="tags-row">
-          <span class="tag">Life Sim</span>
-          <span class="tag">Dynasty</span>
-          <span class="tag">Crime & Prison Break</span>
-          <span class="tag">Stock Market</span>
-          <span class="tag">Ribbons</span>
-        </div>
-
-        <div class="card-actions">
-          <span class="folder-path">📁 lifelines/</span>
-          <a href="lifelines/index.html" class="btn-launch" style="background: linear-gradient(135deg, #10b981, #0284c7); color: #fff;">
-            Launch Game <span>→</span>
+        <div class="card-footer">
+          <span class="meta-path">📁 lifelines/</span>
+          <a href="lifelines/index.html" class="btn-play" style="background: linear-gradient(135deg, #10b981, #0284c7); color: #fff;">
+            Play LifeLines <span>→</span>
           </a>
         </div>
       </article>
+
+      <!-- NO RESULTS PLACEHOLDER -->
+      <div id="noResults" class="no-results">
+        <div style="font-size: 36px;">🔍</div>
+        <div style="font-size: 16px; font-weight: 700; color: #fff;">No matching games found</div>
+        <p style="font-size: 13px; color: var(--text-sub);">Try searching with different keywords or clear the category filters.</p>
+        <button id="resetSearchBtn" class="filter-btn" style="margin-top: 8px;">Reset Search & Filters</button>
+      </div>
 
     </main>
 
+    <!-- KEYBOARD HOTKEYS STRIP -->
+    <section class="hotkeys-bar">
+      <span class="hotkey-hint"><span class="hotkey-key">1</span> Playlog</span>
+      <span class="hotkey-hint"><span class="hotkey-key">2</span> Overdrive</span>
+      <span class="hotkey-hint"><span class="hotkey-key">3</span> LifeLines</span>
+      <span class="hotkey-hint"><span class="hotkey-key">/</span> Search</span>
+      <span class="hotkey-hint"><span class="hotkey-key">M</span> Toggle Sound</span>
+    </section>
+
     <!-- FOOTER -->
     <footer>
-      Antigravity Games Workspace • Open <code>index.html</code> in any web browser to launch
+      <div class="footer-links">
+        <a href="https://games.ageliusg.tech">games.ageliusg.tech</a>
+        <span>•</span>
+        <a href="https://github.com/ageliusg/games" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        <span>•</span>
+        <span>Agelius Games Arcade</span>
+      </div>
+      <div>
+        Crafted with pure HTML5 Canvas, Vanilla ES6 JavaScript, and Web Audio API synthesis.
+      </div>
     </footer>
+
   </div>
+
+  <!-- EMBEDDED ZERO-DEPENDENCY SCRIPT FOR HUB INTERACTIONS & AUDIO -->
+  <script>
+    // --- SIMPLE PROCEDURAL AUDIO SYNTHESIZER ---
+    class HubAudio {
+      constructor() {
+        this.ctx = null;
+        this.muted = localStorage.getItem('agelius_hub_sound') === 'muted';
+      }
+
+      init() {
+        if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      toggle() {
+        this.muted = !this.muted;
+        localStorage.setItem('agelius_hub_sound', this.muted ? 'muted' : 'on');
+        return !this.muted;
+      }
+
+      playHover() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const now = this.ctx.currentTime;
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.04);
+          gain.gain.setValueAtTime(0.02, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.04);
+        } catch(e) {}
+      }
+
+      playClick() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const now = this.ctx.currentTime;
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(587.33, now); // D5
+          osc.frequency.exponentialRampToValueAtTime(1174.66, now + 0.08); // D6
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } catch(e) {}
+      }
+    }
+
+    const hubAudio = new HubAudio();
+
+    // DOM Elements
+    const searchInput = document.getElementById('searchInput');
+    const filterTabs = document.getElementById('filterTabs');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const gameCards = document.querySelectorAll('.game-card');
+    const noResults = document.getElementById('noResults');
+    const resetSearchBtn = document.getElementById('resetSearchBtn');
+    const soundMasterBtn = document.getElementById('soundMasterBtn');
+    const soundIcon = document.getElementById('soundIcon');
+
+    // Update sound button UI
+    function updateSoundUI() {
+      if (hubAudio.muted) {
+        soundIcon.textContent = '🔇';
+        soundMasterBtn.classList.add('muted');
+      } else {
+        soundIcon.textContent = '🔊';
+        soundMasterBtn.classList.remove('muted');
+      }
+    }
+    updateSoundUI();
+
+    soundMasterBtn.addEventListener('click', () => {
+      const active = hubAudio.toggle();
+      updateSoundUI();
+      if (active) hubAudio.playClick();
+    });
+
+    // Sound effects on interactive elements
+    document.querySelectorAll('.filter-btn, .btn-play, .icon-btn').forEach(el => {
+      el.addEventListener('mouseenter', () => hubAudio.playHover());
+      el.addEventListener('click', () => hubAudio.playClick());
+    });
+
+    // Filtering & Searching Logic
+    let currentCategory = 'all';
+
+    function applyFilterAndSearch() {
+      const query = (searchInput.value || '').trim().toLowerCase();
+      let matchCount = 0;
+
+      gameCards.forEach(card => {
+        const categories = (card.dataset.categories || '').toLowerCase();
+        const searchMeta = (card.dataset.search || '').toLowerCase();
+        const title = card.querySelector('.game-title').textContent.toLowerCase();
+        const desc = card.querySelector('.game-desc').textContent.toLowerCase();
+
+        const categoryMatches = (currentCategory === 'all') || categories.includes(currentCategory);
+        const searchMatches = !query || title.includes(query) || desc.includes(query) || searchMeta.includes(query);
+
+        if (categoryMatches && searchMatches) {
+          card.style.display = 'flex';
+          matchCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      if (matchCount === 0) {
+        noResults.style.display = 'flex';
+      } else {
+        noResults.style.display = 'none';
+      }
+    }
+
+    // Filter Buttons Click
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentCategory = btn.dataset.category || 'all';
+        applyFilterAndSearch();
+      });
+    });
+
+    // Search Input
+    searchInput.addEventListener('input', () => {
+      applyFilterAndSearch();
+    });
+
+    // Reset Search
+    if (resetSearchBtn) {
+      resetSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        currentCategory = 'all';
+        filterBtns.forEach(b => b.classList.toggle('active', b.dataset.category === 'all'));
+        applyFilterAndSearch();
+        hubAudio.playClick();
+      });
+    }
+
+    // Keyboard Hotkeys
+    window.addEventListener('keydown', (e) => {
+      // If typing in search box, allow normal typing unless Escape or Enter
+      if (document.activeElement === searchInput) {
+        if (e.key === 'Escape') {
+          searchInput.blur();
+        }
+        return;
+      }
+
+      if (e.key === '/') {
+        e.preventDefault();
+        searchInput.focus();
+        searchInput.select();
+        hubAudio.playClick();
+      } else if (e.key === 'm' || e.key === 'M') {
+        soundMasterBtn.click();
+      } else if (e.key === '1') {
+        hubAudio.playClick();
+        window.location.href = 'playlog-grid/index.html';
+      } else if (e.key === '2') {
+        hubAudio.playClick();
+        window.location.href = 'overdrive/index.html';
+      } else if (e.key === '3') {
+        hubAudio.playClick();
+        window.location.href = 'lifelines/index.html';
+      }
+    });
+  </script>
 
 </body>
 </html>
