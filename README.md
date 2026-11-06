@@ -8,7 +8,7 @@ A unified arcade portal and collection of zero-dependency browser games crafted 
 
 Simply open the central hub in your browser:
 ```bash
-open index.html
+games.ageliusg.tech
 ```
 
 Or run any specific title directly:
